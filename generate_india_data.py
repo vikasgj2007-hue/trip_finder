@@ -1,0 +1,1471 @@
+import json
+import os
+
+india_destinations = [
+    {
+        "id": "jaipur-rajasthan",
+        "name": "Jaipur (The Pink City)",
+        "state": "Rajasthan",
+        "region": "North India",
+        "category": "Heritage & Forts",
+        "tagline": "Royal sandstone palaces, majestic hilltop forts, and rich vibrant bazaars",
+        "rating": 4.93,
+        "reviewsCount": 4820,
+        "priceLevel": "₹₹",
+        "entryFee": 250,
+        "currency": "INR",
+        "bestTimeToVisit": "October to March (Pleasant winter climate)",
+        "weather": {"temp": "24°C", "condition": "Sunny & Pleasant", "icon": "sun"},
+        "coordinates": {"lat": 26.9124, "lng": 75.7873},
+        "heroImage": "https://images.unsplash.com/photo-1603262110263-fb010d6b63d4?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1603262110263-fb010d6b63d4?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Founded in 1727 by Maharaja Sawai Jai Singh II, Jaipur is Rajasthan's royal jewel. Encased in terracotta pink walls, it boasts UNESCO World Heritage sites including the grand Amer Fort, the astronomical Jantar Mantar observatory, and the iconic honeycomb facade of Hawa Mahal.",
+        "howToReach": {
+            "flight": "Jaipur International Airport (JAI) at Sanganer, 12 km from city center. Direct flights from Delhi (50 min), Mumbai (1 hr 45 min), and Bengaluru.",
+            "train": "Jaipur Junction (JP). Top trains: Vande Bharat Express (Delhi to Jaipur in 3.5 hrs), Ajmer Shatabdi, and Ashram Express.",
+            "road": "Connected via Delhi-Jaipur Expressway (NE-4 / NH-48). Approximately 270 km from Delhi (4 hours drive) with modern rest stops."
+        },
+        "itineraries": [
+            {
+                "duration": "1-2 Days (Weekend Trip)",
+                "plan": [
+                    {"day": "Day 1", "title": "Royal Forts & Sunsets", "activities": "Morning climb to Amer Fort, photo-stop at Jal Mahal water palace, sunset at Nahargarh Fort overlooking the illuminated Pink City."},
+                    {"day": "Day 2", "title": "City Heart & Colorful Bazaars", "activities": "Visit City Palace, Hawa Mahal, Jantar Mantar. Evening shopping for blue pottery and textiles at Johari Bazaar."}
+                ]
+            },
+            {
+                "duration": "3-4 Days (Complete Explorer)",
+                "plan": [
+                    {"day": "Day 1", "title": "Amer Citadel & Heritage Walk", "activities": "Amer Fort, Jaigarh Fort (world's largest cannon Jaivana), Panna Meena Ka Kund stepwell."},
+                    {"day": "Day 2", "title": "Old City Architectural Marvels", "activities": "Hawa Mahal sunrise photography, City Palace royal museum, Albert Hall Museum night illumination."},
+                    {"day": "Day 3", "title": "Cuisine & Cultural Village", "activities": "Morning lassi at Lassiwala MI Road, visit Galta Ji (Monkey Temple), royal dinner at Chokhi Dhani ethnic resort."},
+                    {"day": "Day 4", "title": "Craft Villages & Departure", "activities": "Block printing workshop at Sanganer/Bagru villages, shop spices and silver jewels."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Witness the sound & light show at Amer Fort under starry skies",
+            "Savor Dal Baati Churma, Pyaaz Kachori, and Ghewar sweet",
+            "Climb Nahargarh Fort for a 360-degree sunset over Jaipur",
+            "Hot air balloon ride soaring over Aravali mountain forts"
+        ],
+        "ticketTiers": [
+            {"id": "jp-std", "name": "Composite Monument Pass", "price": 300, "desc": "Access to Amer Fort, Hawa Mahal, Jantar Mantar, Albert Hall & Nahargarh Fort"},
+            {"id": "jp-amer", "name": "Amer Fort Skip-the-Line + Audio Guide", "price": 250, "desc": "Priority entry to Amer palace with multilingual digital audio device"},
+            {"id": "jp-heritage", "name": "VIP Pink City Heritage Walking Tour", "price": 850, "desc": "4-hour guided heritage walk with certified Rajasthan Tourism historian and street snacks"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-jp-1",
+                "name": "Rambagh Palace (The Taj Group)",
+                "stars": 5,
+                "rating": 4.96,
+                "distance": "3.5 km from City Palace",
+                "pricePerNight": 28500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Former Royal Residence", "Peacock Gardens", "Jiva Grand Spa", "Heritage Polo Lounge"]
+            },
+            {
+                "id": "h-jp-2",
+                "name": "Alsisar Haveli - Heritage Hotel",
+                "stars": 4,
+                "rating": 4.7,
+                "distance": "1.2 km from Hawa Mahal",
+                "pricePerNight": 6500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Traditional Rajasthani Courtyard", "Outdoor Pool", "Fresco Painted Suites", "Folk Dance Evenings"]
+            },
+            {
+                "id": "h-jp-3",
+                "name": "Hotel Pearl Palace Heritage",
+                "stars": 3,
+                "rating": 4.6,
+                "distance": "2 km from Railway Station",
+                "pricePerNight": 2400,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Rooftop Peacock Restaurant", "Handcrafted Decor", "Free Wi-Fi", "Tour Assistance"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-jp-1",
+                "name": "Panna Meena ka Kund",
+                "category": "16th-Century Geometric Stepwell",
+                "distance": "1.5 km from Amer Fort",
+                "rating": 4.8,
+                "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=800&q=80",
+                "description": "Symmetrical criss-cross stone stepwell once used for community gatherings and rainwater storage."
+            },
+            {
+                "id": "p-jp-2",
+                "name": "Nahargarh Biological Park & Fort",
+                "category": "Hilltop Fortification & Wildlife",
+                "distance": "14 km scenic ridge drive",
+                "rating": 4.7,
+                "image": "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=800&q=80",
+                "description": "Stunning defensive fort on the edge of the Aravalli Hills overlooking the expanse of Jaipur."
+            },
+            {
+                "id": "p-jp-3",
+                "name": "Abhaneri Chand Baori",
+                "category": "World's Deepest Stepwell",
+                "distance": "90 km day trip along Agra road",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80",
+                "description": "Colossal 13-story deep stepwell with 3,500 precisely carved stone steps built in the 9th century."
+            }
+        ]
+    },
+    {
+        "id": "kerala-munnar-backwaters",
+        "name": "Munnar & Alleppey Backwaters",
+        "state": "Kerala",
+        "region": "South India",
+        "category": "Hills, Tea & Backwaters",
+        "tagline": "God's Own Country: Emerald tea plantations, misty mountains, and tranquil houseboat waterways",
+        "rating": 4.96,
+        "reviewsCount": 5120,
+        "priceLevel": "₹₹",
+        "entryFee": 150,
+        "currency": "INR",
+        "bestTimeToVisit": "September to May (Crisp cool hills & ideal cruising backwaters)",
+        "weather": {"temp": "19°C", "condition": "Misty & Refreshing", "icon": "cloud-sun"},
+        "coordinates": {"lat": 10.0889, "lng": 77.0595},
+        "heroImage": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Perched 1,600 meters high in the Western Ghats, Munnar is draped in rolling green carpet tea plantations and shrouded in cool mountain mist. Combined with Alleppey's palm-fringed lagoons and traditional thatched houseboats (Kettuvallam), this is the quintessential Kerala experience.",
+        "howToReach": {
+            "flight": "Cochin International Airport (COK) is 110 km from Munnar (approx. 3.5 hrs scenic uphill drive through cascading waterfalls).",
+            "train": "Aluva (115 km) or Ernakulam Junction (ERS, 130 km). Frequent express trains connect from all Indian metropolitan cities.",
+            "road": "Connected by Kochi-Madurai Highway (NH-85). Smooth scenic roads passing Cheeyappara and Valara waterfalls."
+        },
+        "itineraries": [
+            {
+                "duration": "2-3 Days (Misty Munnar Hills)",
+                "plan": [
+                    {"day": "Day 1", "title": "Tea Gardens & Echo Point", "activities": "Visit KDHP Tea Museum, wander through Tata Tea Estates, evening photo session at Mattupetty Lake & Echo Point."},
+                    {"day": "Day 2", "title": "Wild Nilgiri Tahr & Highest Peak", "activities": "Early morning safari at Eravikulam National Park (Rajamalai), drive to Top Station for panoramic valley views."}
+                ]
+            },
+            {
+                "duration": "4-5 Days (Hills to Houseboat Cruise)",
+                "plan": [
+                    {"day": "Day 1", "title": "Scenic Ascent to Munnar", "activities": "Drive from Kochi, stop at Cheeyappara Waterfalls, spice plantation walk in Adimali."},
+                    {"day": "Day 2", "title": "Tea Heritage & Eravikulam", "activities": "Eravikulam National Park, Kannan Devan Tea Museum tea tasting session, evening Kathakali & Kalaripayattu martial arts show."},
+                    {"day": "Day 3", "title": "Descent to Alleppey Backwaters", "activities": "Drive to Alleppey (Alappuzha), board luxury private thatched houseboat at 12 PM with traditional Karimeen fish lunch."},
+                    {"day": "Day 4", "title": "Village Canals & Sunset", "activities": "Shikara wooden canoe ride through narrow coconut canals, visit Marari white sand beach."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Overnight houseboat stay in Alleppey backwaters with freshly cooked Malabar meals",
+            "Spot the endangered Nilgiri Tahr mountain goat in Eravikulam National Park",
+            "Pluck tea leaves and experience authentic tea tasting at KDHP factory",
+            "Watch Kathakali classical dance and Kalaripayattu ancient martial arts"
+        ],
+        "ticketTiers": [
+            {"id": "kl-eravikulam", "name": "Eravikulam National Park Entry + Safari Bus", "price": 200, "desc": "Official forest department bus pass into the Rajamalai wildlife conservation range"},
+            {"id": "kl-teatour", "name": "Tea Plantation Tasting & Museum Pass", "price": 150, "desc": "Entry to the 1905 heritage tea factory with tea tasting demonstration"},
+            {"id": "kl-houseboat", "name": "Alleppey Day Houseboat Cruise (Per Boat / Group)", "price": 6500, "desc": "5-hour private backwaters cruise with welcome drink, Kerala banana leaf lunch and snacks"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-kl-1",
+                "name": "Spice Tree Munnar Nature Resort",
+                "stars": 5,
+                "rating": 4.94,
+                "distance": "14 km from Munnar Town",
+                "pricePerNight": 14500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Bison Valley Mountain Views", "Infinity Heated Pool", "Ayurvedic Spa", "Organic Garden Dining"]
+            },
+            {
+                "id": "h-kl-2",
+                "name": "Fragrant Nature Munnar",
+                "stars": 5,
+                "rating": 4.8,
+                "distance": "4 km from Pothamedu Viewpoint",
+                "pricePerNight": 8200,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Fireplaces in Every Suite", "Valley View Terraces", "Coffee Lounge", "Bird Watching Walks"]
+            },
+            {
+                "id": "h-kl-3",
+                "name": "Blanket Luxury Villa & Spa",
+                "stars": 4,
+                "rating": 4.75,
+                "distance": "Attukad Waterfall frontage (0.1 km)",
+                "pricePerNight": 6900,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Direct Waterfall View", "Infinity Pool", "Yoga Sessions", "Complimentary Breakfast"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-kl-1",
+                "name": "Top Station Mountain Viewpoint",
+                "category": "Historic Aerial Tramway & Valley Vista",
+                "distance": "32 km scenic drive along Tamil Nadu border",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
+                "description": "Highest point (1,700m) offering sweeping views of the Western Ghats and Theni valley."
+            },
+            {
+                "id": "p-kl-2",
+                "name": "Marayoor Sandalwood Forests & Dolmens",
+                "category": "Natural Sandalwood Forest & Megalithic Caves",
+                "distance": "40 km north of Munnar",
+                "rating": 4.7,
+                "image": "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=800&q=80",
+                "description": "Naturally growing aromatic sandalwood forests and 3,000-year-old stone dolmens built by Stone Age men."
+            },
+            {
+                "id": "p-kl-3",
+                "name": "Attukad Waterfalls",
+                "category": "Cascading Mountain Falls & Trek",
+                "distance": "9 km through winding tea trails",
+                "rating": 4.8,
+                "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+                "description": "Rushing silver water torrents carving through steep green jungle canyons."
+            }
+        ]
+    },
+    {
+        "id": "varanasi-spiritual-ghats",
+        "name": "Varanasi (Kashi / Banaras)",
+        "state": "Uttar Pradesh",
+        "region": "North India",
+        "category": "Spiritual & Ancient Heritage",
+        "tagline": "The eternal city of light, sacred river Ganga, and mesmerizing evening Maha Aarti",
+        "rating": 4.95,
+        "reviewsCount": 6400,
+        "priceLevel": "₹",
+        "entryFee": 0,
+        "currency": "INR",
+        "bestTimeToVisit": "October to March (Crisp morning river breeze & festive season)",
+        "weather": {"temp": "23°C", "condition": "Serene & Gentle Breeze", "icon": "sun"},
+        "coordinates": {"lat": 25.3176, "lng": 82.9739},
+        "heroImage": "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Considered the spiritual capital of India and one of the world's oldest continuously inhabited cities, Varanasi rests on the sacred banks of the Ganges. Pilgrims arrive from across the globe to bathe in the holy river, seek enlightenment, and behold the world-famous evening Ganga Aarti ceremony.",
+        "howToReach": {
+            "flight": "Lal Bahadur Shastri International Airport (VNS) at Babatpur (26 km from Ghats). Direct flights from Delhi, Mumbai, Bengaluru, Hyderabad, and Kolkata.",
+            "train": "Varanasi Junction (BSB) and Banaras Station (BSBS). Premier trains include Vande Bharat Express (Delhi to Varanasi in 8 hrs) and Rajdhani.",
+            "road": "Connected via Purvanchal Expressway and NH-19 (Grand Trunk Road). Smooth multi-lane road connection."
+        },
+        "itineraries": [
+            {
+                "duration": "1-2 Days (Spiritual Immersion)",
+                "plan": [
+                    {"day": "Day 1", "title": "Subah-e-Banaras & Ganga Aarti", "activities": "5:30 AM sunrise boat ride from Assi Ghat to Manikarnika, visit the golden Kashi Vishwanath Corridor, evening grand Maha Aarti at Dashashwamedh Ghat."},
+                    {"day": "Day 2", "title": "Alleys, Sarnath & Silk", "activities": "Walking tour through ancient narrow galis, taste Banarasi Paan, Malaiyo & Kachori, afternoon excursion to Sarnath Buddha sanctuary."}
+                ]
+            },
+            {
+                "duration": "3-4 Days (Deep Cultural Heritage)",
+                "plan": [
+                    {"day": "Day 1", "title": "Sacred Ghats & Kashi Vishwanath", "activities": "Morning boat ride along 84 historic stone ghats, Sugam Darshan at Kashi Vishwanath Temple, Banaras Hindu University (BHU) campus visit."},
+                    {"day": "Day 2", "title": "Sarnath Buddhist Trail", "activities": "Visit Dhamek Stupa where Buddha gave his first sermon, Sarnath Archaeological Museum (original Ashoka Pillar Lion Capital)."},
+                    {"day": "Day 3", "title": "Textile Weaving & Heritage Mansions", "activities": "Visit Master Banarasi Silk weavers in Madanpura, evening classical sitar concert at historic music haveli."},
+                    {"day": "Day 4", "title": "Forts & Riverfront Sunrise", "activities": "Cross Ganga to 17th-century Ramnagar Fort, taste traditional Rabri and lassi at Blue Lassi shop."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Take a sunrise wooden rowing boat ride witnessing bathing rituals and morning prayers",
+            "Behold the synchronized, mesmerizing brass lamp Maha Aarti at Dashashwamedh Ghat",
+            "Walk through the narrow labyrinth alleys of Old Kashi discovering hidden temples",
+            "Savor street delicacies: Tamatar Chaat at Kashi Chaat Bhandar, hot Kachori-Jalebi, and Banarasi Paan"
+        ],
+        "ticketTiers": [
+            {"id": "vn-boat", "name": "Sunrise Ghats Wooden Boat Ride", "price": 400, "desc": "1.5 hour morning sunrise rowing boat journey past all 84 iconic river ghats"},
+            {"id": "vn-darshan", "name": "Kashi Vishwanath Sugam VIP Pass", "price": 300, "desc": "Direct priority queue pass for Shiva Jyotirlinga darshan inside the temple sanctum"},
+            {"id": "vn-aarti-boat", "name": "Sunset Evening Ganga Aarti VIP Boat Seat", "price": 600, "desc": "Reserved front-row riverboat seat directly facing Dashashwamedh Aarti lamps"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-vn-1",
+                "name": "BrijRama Palace, Varanasi - Heritage Hotel",
+                "stars": 5,
+                "rating": 4.96,
+                "distance": "Directly perched on Darbhanga Ghat (0 m)",
+                "pricePerNight": 22000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["18th-Century Maratha Palace", "Private Boat Transfers", "Ganga Facing Heritage Dining", "Classical Music Recitals"]
+            },
+            {
+                "id": "h-vn-2",
+                "name": "Taj Ganges, Varanasi",
+                "stars": 5,
+                "rating": 4.85,
+                "distance": "Nadesar Palace Grounds (5 km)",
+                "pricePerNight": 12500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["40 Acres of Lush Green Oasis", "Outdoor Swimming Pool", "Jiva Royal Spa", "Varuna Indian Fine Dining"]
+            },
+            {
+                "id": "h-vn-3",
+                "name": "Hotel Surya, Kaiser Palace",
+                "stars": 3,
+                "rating": 4.5,
+                "distance": "Cantonment Area (4.5 km)",
+                "pricePerNight": 3200,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["1810 Heritage Residence", "Garden Lawn Cafe", "Swimming Pool", "Spa & Wellness"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-vn-1",
+                "name": "Sarnath Deer Park & Dhamek Stupa",
+                "category": "UNESCO Buddhist Pilgrimage Site",
+                "distance": "10 km northeast of Varanasi",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=800&q=80",
+                "description": "The sacred deer park where Lord Buddha preached his first sermon after attaining enlightenment."
+            },
+            {
+                "id": "p-vn-2",
+                "name": "Ramnagar Fort & Royal Museum",
+                "category": "18th-Century Sandstone River Fort",
+                "distance": "14 km across Malviya Bridge",
+                "rating": 4.6,
+                "image": "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80",
+                "description": "Fortress residence of the Kashi Naresh featuring vintage royal cars, clocks, and armory."
+            },
+            {
+                "id": "p-vn-3",
+                "name": "Chunar Fort on River Rock",
+                "category": "Ancient Hilltop Citadel",
+                "distance": "40 km scenic drive along the Ganges",
+                "rating": 4.7,
+                "image": "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=800&q=80",
+                "description": "Legendary cliff fortress associated with king Vikramaditya, Sher Shah Suri, and Emperor Akbar."
+            }
+        ]
+    },
+    {
+        "id": "ladakh-pangong-nubra",
+        "name": "Ladakh, Pangong Tso & Nubra",
+        "state": "Ladakh (UT)",
+        "region": "Himalayas & North",
+        "category": "High-Altitude Mountains",
+        "tagline": "The Land of High Passes: Shimmering sapphire lakes, ancient monasteries, and sand dunes",
+        "rating": 4.98,
+        "reviewsCount": 3890,
+        "priceLevel": "₹₹₹",
+        "entryFee": 400,
+        "currency": "INR",
+        "bestTimeToVisit": "May to September (High mountain passes open & pleasant weather)",
+        "weather": {"temp": "14°C", "condition": "Crisp Mountain Air & Sunny", "icon": "sun"},
+        "coordinates": {"lat": 34.1526, "lng": 77.5771},
+        "heroImage": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Known as 'Little Tibet', Ladakh sits 3,500 meters above sea level amidst the trans-Himalayan desert. It is celebrated for its crystal-clear color-changing lakes like Pangong Tso, dramatic mountain passes, whitewashed Tibetan monasteries, and the cold desert sand dunes of Hunder.",
+        "howToReach": {
+            "flight": "Kushok Bakula Rimpochee Airport (IXL) in Leh is one of the highest commercial airports in the world. Direct daily flights from Delhi (1 hr 15 min), Mumbai, and Srinagar.",
+            "train": "Nearest major railheads are Jammu Tawi (700 km) and Chandigarh. Major high-speed rail connectivity to Bilaspur-Manali-Leh is currently under construction.",
+            "road": "Two world-famous highway road trips: Manali-Leh Highway (428 km, open May-Oct) and Srinagar-Leh Highway (420 km, open May-Nov) passing breathtaking mountain passes."
+        },
+        "itineraries": [
+            {
+                "duration": "3-4 Days (Leh & Pangong Highlights)",
+                "plan": [
+                    {"day": "Day 1", "title": "Acclimatization & Leh Bazaar", "activities": "Mandatory rest for high altitude altitude acclimatization. Evening stroll to Leh Palace and Shanti Stupa for sunset."},
+                    {"day": "Day 2", "title": "Indus Valley Monasteries", "activities": "Visit Thiksey Monastery (resembling Potala Palace), Shey Palace, and Hemis Monastery."},
+                    {"day": "Day 3", "title": "Pangong Tso Expedition", "activities": "Cross Chang La pass (17,688 ft) to arrive at the mesmerizing turquoise waters of Pangong Tso."}
+                ]
+            },
+            {
+                "duration": "6-7 Days (Ultimate Ladakh Circuit)",
+                "plan": [
+                    {"day": "Day 1", "title": "Acclimatization in Leh", "activities": "Rest, hydrate, gentle walk around Leh Main Market."},
+                    {"day": "Day 2", "title": "Hall of Fame & Magnetic Hill", "activities": "Visit Magnetic Hill, Gurudwara Pathar Sahib, and the confluence of Indus and Zanskar rivers (Sangam)."},
+                    {"day": "Day 3", "title": "Nubra Valley via Khardung La", "activities": "Drive across Khardung La pass (17,982 ft). Diskit Monastery colossal Maitreya Buddha statue and double-humped camel safari at Hunder sand dunes."},
+                    {"day": "Day 4", "title": "Turtuk Balti Border Village", "activities": "Visit the northernmost village of Turtuk on the LOC, explore apricot orchards and Balti stone heritage homes."},
+                    {"day": "Day 5", "title": "Pangong Lake via Shyok Route", "activities": "Scenic river road to Pangong Tso. Stargazing at the Milky Way under crystal-clear night skies in Spangmik."},
+                    {"day": "Day 6", "title": "Return to Leh & Departure Prep", "activities": "Sunrise lake photography, cross Chang La back to Leh. Shop Pashmina shawls and dried apricots."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Camp under the dazzling Milky Way stars beside Pangong Tso lake",
+            "Ride double-humped Bactrian camels across the cold desert sand dunes of Hunder",
+            "Drive or bike across Khardung La pass, one of the highest motorable roads in the world",
+            "Attend the morning monastic chanting and butter lamp prayers at Thiksey Monastery"
+        ],
+        "ticketTiers": [
+            {"id": "ld-ilp", "name": "Ladakh Inner Line Permit (ILP) + Green Fee", "price": 450, "desc": "Official administration permit for visiting Pangong, Nubra Valley, Khardung La & Tso Moriri"},
+            {"id": "ld-safari", "name": "Nubra Hunder Double-Humped Camel Safari", "price": 400, "desc": "30-minute camel caravan trek across the white sand dunes of Hunder"},
+            {"id": "ld-monastery", "name": "Heritage Monasteries Circuit Pass", "price": 250, "desc": "Entry access to Thiksey, Hemis, Shey Palace, and Diskit monastery museums"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-ld-1",
+                "name": "The Grand Dragon Ladakh",
+                "stars": 5,
+                "rating": 4.92,
+                "distance": "1.5 km from Leh Main Market",
+                "pricePerNight": 16500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Oxygen-Enriched Rooms", "Heated Flooring", "Stok Kangri Mountain Views", "Multi-Cuisine Dining"]
+            },
+            {
+                "id": "h-ld-2",
+                "name": "Nubra Organic Retreat & Cottages",
+                "stars": 4,
+                "rating": 4.75,
+                "distance": "Hunder Village (0.5 km to sand dunes)",
+                "pricePerNight": 5800,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Organic Apricot & Apple Orchards", "Luxury Swiss Tents", "Bonfire Nights", "Traditional Ladakhi Meals"]
+            },
+            {
+                "id": "h-ld-3",
+                "name": "Pangong Lake View Luxury Camp",
+                "stars": 3,
+                "rating": 4.6,
+                "distance": "Spangmik lakeside (200 m to water)",
+                "pricePerNight": 4200,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Direct Turquoise Water Views", "Insulated Weatherproof Tents", "Hot Water Supply", "Buffet Dining"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-ld-1",
+                "name": "Sangam (Confluence of Indus & Zanskar)",
+                "category": "Natural River Phenomenon & Rafting",
+                "distance": "30 km west of Leh along Srinagar road",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=800&q=80",
+                "description": "Spectacular sight where the emerald green Indus meets the muddy brown Zanskar river in a deep canyon."
+            },
+            {
+                "id": "p-ld-2",
+                "name": "Tso Moriri High Altitude Lake",
+                "category": "Wetland Sanctuary & Migratory Birds",
+                "distance": "220 km southeast of Leh",
+                "rating": 4.95,
+                "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+                "description": "Pristine, less-crowded Ramsar site lake surrounded by snow-capped peaks and Changpa nomad tents."
+            },
+            {
+                "id": "p-ld-3",
+                "name": "Lamayuru 'Moonland' Monastery",
+                "category": "Lunar Landscape & Ancient Gompa",
+                "distance": "125 km on Leh-Kargil highway",
+                "rating": 4.8,
+                "image": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80",
+                "description": "Geological marvel resembling the surface of the Moon with an 11th-century cliffside monastery."
+            }
+        ]
+    },
+    {
+        "id": "goa-beaches-heritage",
+        "name": "Goa (Sun, Sand & Portuguese Heritage)",
+        "state": "Goa",
+        "region": "West India",
+        "category": "Beaches & Coastal Life",
+        "tagline": "Golden Arabian Sea shores, Portuguese baroque churches, spice farms, and vibrant coastal shacks",
+        "rating": 4.92,
+        "reviewsCount": 7200,
+        "priceLevel": "₹₹",
+        "entryFee": 0,
+        "currency": "INR",
+        "bestTimeToVisit": "November to February (Sun-drenched days, cool evenings & celebrations)",
+        "weather": {"temp": "28°C", "condition": "Sunny Beach Breeze", "icon": "sun"},
+        "coordinates": {"lat": 15.2993, "lng": 74.1240},
+        "heroImage": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "India's beloved coastal paradise blends tropical beauty with over 450 years of Portuguese colonial history. From lively North Goa beaches and water sports to peaceful South Goa white sands, UNESCO churches of Old Goa, and lush spice plantations in Ponda.",
+        "howToReach": {
+            "flight": "Dabolim Airport (GOI) in South Goa and Manohar International Airport (MOPA) in North Goa. Direct flights from Delhi, Mumbai, Bengaluru, Chennai, and overseas.",
+            "train": "Madgaon Junction (MAO) and Thivim (THVM). Top trains: Konkan Kanya Express, Tejas Express (Mumbai to Goa in 8.5 hrs), and Vande Bharat Express.",
+            "road": "Connected via NH-66 (Mumbai-Goa Highway) and NH-4A (from Bengaluru/Belagavi). Scenic Western Ghats road trip."
+        },
+        "itineraries": [
+            {
+                "duration": "2-3 Days (Sun & Forts Weekend)",
+                "plan": [
+                    {"day": "Day 1", "title": "North Goa Forts & Sunset Shacks", "activities": "Morning visit to Aguada Fort & lighthouse, relax at Candolim/Anjuna beach, sunset cocktails at Thalassa Vagator."},
+                    {"day": "Day 2", "title": "Old Goa & Latin Quarter", "activities": "Explore Basilica of Bom Jesus, Se Cathedral, walk through colorful Fontainhas Portuguese Latin Quarter in Panaji."}
+                ]
+            },
+            {
+                "duration": "4-5 Days (Complete Coastal Discovery)",
+                "plan": [
+                    {"day": "Day 1", "title": "North Beaches & Water Sports", "activities": "Parasailing and jet skiing at Calangute/Baga, sunset stroll on Chapora Fort (Dil Chahta Hai point)."},
+                    {"day": "Day 2", "title": "Colonial History & Mandovi River", "activities": "UNESCO churches of Old Goa, sunset cruise with live Goan folk dance on the Mandovi River."},
+                    {"day": "Day 3", "title": "Spice Farms & Dudhsagar Waterfall", "activities": "Day trip to the majestic 4-tiered Dudhsagar Waterfalls via jungle jeep safari and Sahakari Spice Farm lunch."},
+                    {"day": "Day 4", "title": "Serene South Goa Escape", "activities": "Pristine white sands of Palolem and Agonda beaches, kayak into Cola beach emerald lagoon."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Explore the colorful pastel Portuguese houses and tiled streets of Fontainhas Latin Quarter",
+            "Take an open jeep safari through Bhagwan Mahavir Wildlife Sanctuary to Dudhsagar Falls",
+            "Savor authentic Goan Fish Curry, Prawn Balchão, and traditional Bebinca dessert",
+            "Sunset dolphin spotting boat trip along Sinquerim and Morjim coastline"
+        ],
+        "ticketTiers": [
+            {"id": "goa-cruise", "name": "Mandovi River Sunset Cultural Cruise", "price": 500, "desc": "1-hour river cruise with live DJ, Dekhni & Fugdi traditional Goan folk performances"},
+            {"id": "goa-dudhsagar", "name": "Dudhsagar Waterfall Jeep Safari Pass", "price": 1200, "desc": "Official forest permit, 4x4 jungle jeep safari, and life jacket for swimming in the falls pool"},
+            {"id": "goa-watersports", "name": "Grand Water Sports Combo Package", "price": 1800, "desc": "Parasailing with speed boat dip, Jet Ski ride, Banana ride, and Bumper boat ride"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-goa-1",
+                "name": "Taj Fort Aguada Resort & Spa",
+                "stars": 5,
+                "rating": 4.92,
+                "distance": "Direct Sinquerim Beach frontage (0 km)",
+                "pricePerNight": 19500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["16th-Century Portuguese Ramparts", "Clifftop Ocean Pools", "Jiva Spa", "Beachside Seafood Grills"]
+            },
+            {
+                "id": "h-goa-2",
+                "name": "Alila Diwa Goa - Hyatt",
+                "stars": 5,
+                "rating": 4.88,
+                "distance": "Majorda Beach, South Goa (0.8 km)",
+                "pricePerNight": 11500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Infinity Pool Overlooking Paddy Fields", "Private Cinema", "Shuttle to Beach", "Spa Alila"]
+            },
+            {
+                "id": "h-goa-3",
+                "name": "Heritage Village Resort & Spa",
+                "stars": 4,
+                "rating": 4.65,
+                "distance": "Arossim Beach, South Goa (0.3 km)",
+                "pricePerNight": 5900,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Traditional Goan Villa Architecture", "Ayurveda Spa", "Live Poolside Music", "All-Inclusive Dining"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-goa-1",
+                "name": "Dudhsagar Waterfalls (Sea of Milk)",
+                "category": "600m Four-Tiered Mountain Waterfall",
+                "distance": "60 km east on Goa-Karnataka border",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+                "description": "Massive rushing white waterfall where trains cross on a historic railway bridge right in front of the cascade."
+            },
+            {
+                "id": "p-goa-2",
+                "name": "Basilica of Bom Jesus & Se Cathedral",
+                "category": "UNESCO World Heritage Baroque Churches",
+                "distance": "10 km east of Panaji in Old Goa",
+                "rating": 4.85,
+                "image": "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80",
+                "description": "16th-century baroque basilica holding the sacred mortal remains of St. Francis Xavier."
+            },
+            {
+                "id": "p-goa-3",
+                "name": "Cola Beach & Emerald Lagoon",
+                "category": "Secluded Beach & Fresh Water Lagoon",
+                "distance": "Canacona, South Goa (32 km from Madgaon)",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80",
+                "description": "Unspoiled golden beach where an emerald-green natural freshwater river meets the Arabian sea."
+            }
+        ]
+    },
+    {
+        "id": "taj-mahal-agra-heritage",
+        "name": "Agra & The Taj Mahal",
+        "state": "Uttar Pradesh",
+        "region": "North India",
+        "category": "Heritage & Forts",
+        "tagline": "The world's greatest monument of eternal love sculpted in pure white Makrana marble",
+        "rating": 4.97,
+        "reviewsCount": 8500,
+        "priceLevel": "₹₹",
+        "entryFee": 50,
+        "currency": "INR",
+        "bestTimeToVisit": "October to March (Crisp sunrise mist & mild afternoons)",
+        "weather": {"temp": "25°C", "condition": "Golden Sunlight", "icon": "sun"},
+        "coordinates": {"lat": 27.1751, "lng": 78.0421},
+        "heroImage": "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1587135941948-670b381f08ce?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Commissioned in 1632 by Mughal emperor Shah Jahan to house the tomb of Mumtaz Mahal, the Taj Mahal is a universally acclaimed masterpiece. Adorned with delicate pietra dura gemstone inlays, symmetric Mughal gardens, and twin red sandstone mosques beside the Yamuna River.",
+        "howToReach": {
+            "flight": "Kheria Airport (AGR) in Agra, or Delhi's Indira Gandhi International Airport (DEL) 210 km away.",
+            "train": "Agra Cantt (AGC). Gatimaan Express (Delhi to Agra in 100 min), Taj Express, and Vande Bharat Express offer high-speed connectivity.",
+            "road": "Yamuna Expressway (6-lane modern toll road, 3 hours drive from Delhi) and Lucknow-Agra Expressway."
+        },
+        "itineraries": [
+            {
+                "duration": "1 Day (Golden Triangle Day Trip)",
+                "plan": [
+                    {"day": "Day 1", "title": "Sunrise to Sunset Icons", "activities": "Early morning 6:00 AM sunrise at the Taj Mahal, breakfast with Bedmi Puri, explore massive Agra Fort, afternoon sunset view from Mehtab Bagh across the river."}
+                ]
+            },
+            {
+                "duration": "2 Days (Agra & Fatehpur Sikri)",
+                "plan": [
+                    {"day": "Day 1", "title": "Mughal Splendors", "activities": "Taj Mahal inner dome tour, Agra Fort royal palaces (Diwan-i-Khas, Jahangiri Mahal), evening marble inlay craft workshop."},
+                    {"day": "Day 2", "title": "Ghost Capital & Tomb of Akbar", "activities": "Morning excursion to UNESCO Fatehpur Sikri (Buland Darwaza & Salim Chishti Dargah), visit Tomb of Akbar at Sikandra."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Watch the Taj Mahal shift from pinkish-gold at sunrise to brilliant white at noon and silver at night",
+            "Explore the red sandstone palaces of Agra Fort where Shah Jahan spent his final years",
+            "Taste the world-famous sweet Agra Petha (Kesar, Paan & Angoori flavors) at Panchhi Petha",
+            "Visit Mehtab Bagh (Moonlight Garden) across the Yamuna for uninterrupted sunset photography"
+        ],
+        "ticketTiers": [
+            {"id": "taj-indian", "name": "Indian Citizen Monument Pass", "price": 50, "desc": "Standard admission to monument charbagh grounds and outer courtyards"},
+            {"id": "taj-dome", "name": "Main Mausoleum Cenotaph Entry", "price": 250, "desc": "Access inside the elevated white marble terrace and royal tombs dome chamber"},
+            {"id": "taj-vip", "name": "Sunrise Guided Tour with ASI Historian", "price": 800, "desc": "Early gate priority entry with certified architectural historian and golf cart shuttle"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-taj-1",
+                "name": "The Oberoi Amarvilas",
+                "stars": 5,
+                "rating": 4.97,
+                "distance": "600 m from Taj East Gate",
+                "pricePerNight": 32000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Unobstructed Taj Views from Every Room", "Private Golf Cart Drop", "Mughal Terraced Pool", "Royal Spa"]
+            },
+            {
+                "id": "h-taj-2",
+                "name": "ITC Mughal - A Luxury Collection Resort",
+                "stars": 5,
+                "rating": 4.75,
+                "distance": "2.8 km from Taj Mahal",
+                "pricePerNight": 8500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["35 Acres of Sprawling Gardens", "Kaya Kalp Spa", "Peshawri Dining", "Tennis Courts"]
+            },
+            {
+                "id": "h-taj-3",
+                "name": "Tajview, Agra - IHCL SeleQtions",
+                "stars": 4,
+                "rating": 4.6,
+                "distance": "2 km from Taj Mahal",
+                "pricePerNight": 5200,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Rooftop Cafe with Taj Views", "Swimming Pool", "Mughlai Cuisine", "Free Wi-Fi"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-taj-1",
+                "name": "Fatehpur Sikri Imperial Complex",
+                "category": "UNESCO World Heritage Mughal Capital",
+                "distance": "36 km west of Agra",
+                "rating": 4.85,
+                "image": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80",
+                "description": "Akbar's 16th-century ghost capital preserved in pristine red sandstone, featuring the towering 54-meter Buland Darwaza."
+            },
+            {
+                "id": "p-taj-2",
+                "name": "Mehtab Bagh (Moonlight Garden)",
+                "category": "Symmetrical Mughal Riverbank Garden",
+                "distance": "1.2 km directly across Yamuna River",
+                "rating": 4.8,
+                "image": "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=800&q=80",
+                "description": "Perfect riverfront vantage point aligned with the Taj Mahal for sunset reflections on the water."
+            },
+            {
+                "id": "p-taj-3",
+                "name": "Tomb of I'timād-ud-Daulah (Baby Taj)",
+                "category": "Precursor Marble Jewel",
+                "distance": "5 km north of Taj Mahal",
+                "rating": 4.75,
+                "image": "https://images.unsplash.com/photo-1587135941948-670b381f08ce?auto=format&fit=crop&w=800&q=80",
+                "description": "Known as the 'Jewel Box' or 'Baby Taj', this mausoleum first introduced delicate pietra dura marble inlay."
+            }
+        ]
+    },
+    {
+        "id": "rishikesh-himalayan-ganga",
+        "name": "Rishikesh (Yoga Capital of the World)",
+        "state": "Uttarakhand",
+        "region": "Himalayas & North",
+        "category": "Spiritual & Adventure",
+        "tagline": "Gateway to the Garhwal Himalayas, white-water river rafting, and serene meditation ashrams",
+        "rating": 4.94,
+        "reviewsCount": 4300,
+        "priceLevel": "₹",
+        "entryFee": 0,
+        "currency": "INR",
+        "bestTimeToVisit": "September to November & March to May (Pleasant weather & ideal river rapids)",
+        "weather": {"temp": "21°C", "condition": "Crisp Mountain Breeze", "icon": "wind"},
+        "coordinates": {"lat": 30.0869, "lng": 78.2676},
+        "heroImage": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Nestled in the foothills of the Himalayas where the holy Ganga emerges from mountain gorges into the plains. Rishikesh is a global center for yoga, meditation, spiritual ashrams, and thrilling adventure sports like white-water rafting, bungee jumping, and riverside camping.",
+        "howToReach": {
+            "flight": "Jolly Grant Airport (DED) in Dehradun is just 20 km from Rishikesh (35 min taxi ride). Direct flights from Delhi, Mumbai, Bengaluru, and Ahmedabad.",
+            "train": "Yog Nagari Rishikesh (YNRK) and Haridwar Railway Station (25 km). Vande Bharat Express and Shatabdi Express connect Delhi to Haridwar/Rishikesh in under 4 hours.",
+            "road": "Connected via Delhi-Meerut Expressway and NH-58. Around 230 km from Delhi (4.5 hours drive)."
+        },
+        "itineraries": [
+            {
+                "duration": "2 Days (Weekend Adventure & Peace)",
+                "plan": [
+                    {"day": "Day 1", "title": "White-Water Rapids & Evening Aarti", "activities": "16 km river rafting from Shivpuri to NIM Beach, cliff jumping, evening Ganga Aarti with brass lamps at Parmarth Niketan."},
+                    {"day": "Day 2", "title": "Bridges & Beatles Ashram", "activities": "Morning yoga session by the riverbank, walk across Lakshman Jhula and Ram Jhula, explore Chaurasi Kutia (The Beatles Ashram) graffiti domes."}
+                ]
+            },
+            {
+                "duration": "3-4 Days (Complete Himalayan Retreat)",
+                "plan": [
+                    {"day": "Day 1", "title": "Riverside Ashrams & Cafes", "activities": "Explore Tapovan organic cafes, German Bakeries, sunset at Triveni Ghat with Vedic chanting."},
+                    {"day": "Day 2", "title": "Adrenaline Sports", "activities": "India's highest 83m bungee jump and flying fox at Jumpin Heights in Mohan Chatti."},
+                    {"day": "Day 3", "title": "Sunrise Temple & Waterfalls", "activities": "Early morning drive to Kunjapuri Devi Temple (1,676m) for sunrise over Himalayan peaks, trek to Neer Garh waterfalls."},
+                    {"day": "Day 4", "title": "Ayurveda & Sound Healing", "activities": "Sound bowl meditation healing therapy and Ayurvedic massage before departure."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Conquer the thrilling rapids (Roller Coaster, Golf Course) white-water rafting down the Ganga",
+            "Experience sunset Maha Aarti at Parmarth Niketan with soulful kirtans and floating diyas",
+            "Visit the historic Beatles Ashram covered in vibrant spiritual murals and meditation stone caves",
+            "Hike to Kunjapuri Temple at dawn for views of snow-capped Himalayan summits: Chaukhamba and Swargarohini"
+        ],
+        "ticketTiers": [
+            {"id": "rk-rafting", "name": "Ganga White-Water Rafting (16 km Shivpuri)", "price": 999, "desc": "16 km rafting with certified river guide, helmet, life jacket, and cliff jumping point"},
+            {"id": "rk-beatles", "name": "The Beatles Ashram Forest Entry Pass", "price": 150, "desc": "Admission to the historic Maharishi Mahesh Yogi ashram, meditation caves, and photo gallery"},
+            {"id": "rk-bungee", "name": "Mohan Chatti 83m Bungee Jump Pass", "price": 3500, "desc": "India's highest fixed-platform bungee jump supervised by New Zealand jump masters"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-rk-1",
+                "name": "Ananda in the Himalayas",
+                "stars": 5,
+                "rating": 4.98,
+                "distance": "16 km uphill in Narendra Nagar",
+                "pricePerNight": 38000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["100-Acre Maharaja Palace Estate", "World-Renowned Wellness Spa", "Ganga Valley Views", "Custom Ayurvedic Diets"]
+            },
+            {
+                "id": "h-rk-2",
+                "name": "Taj Rishikesh Resort & Spa, Uttarakhand",
+                "stars": 5,
+                "rating": 4.93,
+                "distance": "Singthali (30 km upstream)",
+                "pricePerNight": 22000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Private Ganga Riverfront Beach", "Heated Infinity Pool", "Jiva Spa", "Himalayan Stone Architecture"]
+            },
+            {
+                "id": "h-rk-3",
+                "name": "Aloha On The Ganges",
+                "stars": 4,
+                "rating": 4.75,
+                "distance": "Tapovan riverside (1.5 km)",
+                "pricePerNight": 7500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Direct River View Apartments", "Infinity Pool Facing Ganga", "Daily Yoga Sessions", "Ayurvedic Center"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-rk-1",
+                "name": "Kunjapuri Devi Himalayan Sunrise Temple",
+                "category": "High Mountain Sacred Peak (1,676m)",
+                "distance": "26 km scenic uphill drive",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+                "description": "Sacred Shakti Peeth on a mountain ridge offering 360-degree sunrise panoramas of the snow peaks and Doon valley."
+            },
+            {
+                "id": "p-rk-2",
+                "name": "Neer Garh Natural Waterfalls",
+                "category": "Jungle Waterfall & Natural Rock Pools",
+                "distance": "6 km from Tapovan",
+                "rating": 4.7,
+                "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+                "description": "Multi-tiered turquoise waterfall tumbling through forest canopies with shallow dipping pools."
+            },
+            {
+                "id": "p-rk-3",
+                "name": "Haridwar & Har Ki Pauri",
+                "category": "Sacred Ghat & Ancient Holy City",
+                "distance": "25 km south along the Ganga",
+                "rating": 4.85,
+                "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
+                "description": "One of the four Kumbh Mela sites celebrated for the grand evening Ganga Aarti at Har Ki Pauri."
+            }
+        ]
+    },
+    {
+        "id": "udaipur-city-of-lakes",
+        "name": "Udaipur (The City of Lakes)",
+        "state": "Rajasthan",
+        "region": "North India",
+        "category": "Heritage & Romance",
+        "tagline": "Venice of the East: Floating marble palaces, serene lakes, and Aravalli mountain sunsets",
+        "rating": 4.96,
+        "reviewsCount": 4900,
+        "priceLevel": "₹₹₹",
+        "entryFee": 300,
+        "currency": "INR",
+        "bestTimeToVisit": "September to March (Breezy lakeside evenings)",
+        "weather": {"temp": "23°C", "condition": "Sunny & Royal Breeze", "icon": "sun"},
+        "coordinates": {"lat": 24.5854, "lng": 73.7125},
+        "heroImage": "https://images.unsplash.com/photo-1589802829985-817e51171b92?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1589802829985-817e51171b92?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1603262110263-fb010d6b63d4?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Known as the most romantic city in India, Udaipur is built around five sparkling artificial lakes: Lake Pichola, Fateh Sagar, Udai Sagar, Swaroop Sagar, and Doodh Talai. It is dominated by the colossal City Palace, the Lake Palace floating in mid-water, and ornate havelis.",
+        "howToReach": {
+            "flight": "Maharana Pratap Airport (UDR) in Dabok, 22 km from city center. Direct flights from Delhi, Mumbai, Jaipur, Bengaluru, and Hyderabad.",
+            "train": "Udaipur City Railway Station (UDZ). Connected by Chetak Express, Mewar Express, and daily superfast trains to all major hubs.",
+            "road": "Connected via NH-48 and NH-58. Excellent 4-lane highway connection from Ahmedabad (260 km, 4.5 hrs) and Jaipur (390 km)."
+        },
+        "itineraries": [
+            {
+                "duration": "2 Days (Lakeside Romance Weekend)",
+                "plan": [
+                    {"day": "Day 1", "title": "City Palace & Lake Pichola Cruise", "activities": "Explore the sprawling courtyards and peacock mosaics of City Palace, sunset boat ride around Taj Lake Palace to Jag Mandir."},
+                    {"day": "Day 2", "title": "Gardens, Havelis & Bagore Ki Haveli", "activities": "Visit Saheliyon Ki Bari fountains, vintage car museum, evening Dharohar folk dance show at Bagore Ki Haveli on Gangaur Ghat."}
+                ]
+            },
+            {
+                "duration": "3-4 Days (Complete Mewar Heritage)",
+                "plan": [
+                    {"day": "Day 1", "title": "City Palace & Sunset Ghats", "activities": "City Palace complex, Jagdish Temple, sunset rooftop dinner overlooking Lake Pichola lights."},
+                    {"day": "Day 2", "title": "Monsoon Palace & Fateh Sagar", "activities": "Drive up to Sajjangarh Monsoon Palace for panoramic Aravalli views, speed boat at Fateh Sagar Lake, visit Nehru Garden."},
+                    {"day": "Day 3", "title": "Day Trip to Kumbhalgarh Fort", "activities": "Excursion to UNESCO Kumbhalgarh Fort (world's second longest continuous wall after Great Wall of China) and Ranakpur Jain Temple."},
+                    {"day": "Day 4", "title": "Artisan Markets & Farewell", "activities": "Shop traditional miniature paintings, Mojari leather shoes, and silver handicrafts at Bada Bazaar."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Take an evening sunset boat cruise across Lake Pichola watching City Palace light up in gold",
+            "Watch the colorful Dharohar Rajasthani puppet and folk dance show at historic Bagore Ki Haveli",
+            "Climb up to Sajjangarh (Monsoon Palace) perched high in the clouds for the ultimate valley sunset",
+            "Savor Laal Maas and Mewari Ker Sangri at an open-air rooftop terrace restaurant by the water"
+        ],
+        "ticketTiers": [
+            {"id": "ud-palace", "name": "City Palace Museum Pass", "price": 300, "desc": "Access to royal museum galleries, Peacock Courtyard (Mor Chowk), and Sheesh Mahal"},
+            {"id": "ud-boat", "name": "Lake Pichola Sunset Boat Cruise", "price": 500, "desc": "1-hour boat ride on Lake Pichola with brief stopover at Jag Mandir island palace"},
+            {"id": "ud-dharohar", "name": "Bagore Ki Haveli Evening Folk Dance Pass", "price": 150, "desc": "Front-row seating for the famous 7:00 PM Dharohar cultural dance and puppet show"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-ud-1",
+                "name": "Taj Lake Palace, Udaipur",
+                "stars": 5,
+                "rating": 4.98,
+                "distance": "Floating in middle of Lake Pichola (Boat only)",
+                "pricePerNight": 36000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["1746 Floating White Marble Palace", "Private Boat Transfers", "Jiva Spa Boat", "Royal Butler Service"]
+            },
+            {
+                "id": "h-ud-2",
+                "name": "The Leela Palace Udaipur",
+                "stars": 5,
+                "rating": 4.96,
+                "distance": "Lake Pichola Shoreline",
+                "pricePerNight": 31000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Lake Facing Luxury Suites", "Sheesh Mahal Fine Dining", "Outdoor Heated Pool", "Spa & Wellness"]
+            },
+            {
+                "id": "h-ud-3",
+                "name": "Amet Haveli - Heritage Hotel",
+                "stars": 4,
+                "rating": 4.75,
+                "distance": "Hanuman Ghat (Direct water edge)",
+                "pricePerNight": 7500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Famous Ambrai Lakeside Restaurant", "18th-Century Haveli", "Garden Swimming Pool", "Free Wi-Fi"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-ud-1",
+                "name": "Kumbhalgarh Fort & The Great Wall of India",
+                "category": "UNESCO World Heritage Hilltop Citadel",
+                "distance": "85 km through Aravali mountain pass",
+                "rating": 4.92,
+                "image": "https://images.unsplash.com/photo-1589802829985-817e51171b92?auto=format&fit=crop&w=800&q=80",
+                "description": "Massive fort birthplace of Maharana Pratap encircled by 36-km fortified perimeter wall second only to China."
+            },
+            {
+                "id": "p-ud-2",
+                "name": "Ranakpur Jain Temple",
+                "category": "15th-Century White Marble Architectural Wonder",
+                "distance": "90 km northwest of Udaipur",
+                "rating": 4.95,
+                "image": "https://images.unsplash.com/photo-1603262110263-fb010d6b63d4?auto=format&fit=crop&w=800&q=80",
+                "description": "Carved with 1,444 individually unique marble pillars where no two pillars share the same design."
+            },
+            {
+                "id": "p-ud-3",
+                "name": "Sajjangarh (Monsoon Palace)",
+                "category": "High Clifftop Monsoon Observatory",
+                "distance": "10 km west uphill",
+                "rating": 4.75,
+                "image": "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=800&q=80",
+                "description": "White marble hilltop castle perched 944 meters high overlooking the lakes and wildlife sanctuary."
+            }
+        ]
+    },
+    {
+        "id": "meghalaya-living-roots",
+        "name": "Meghalaya (Cherrapunji & Dawki)",
+        "state": "Meghalaya",
+        "region": "East & North-East",
+        "category": "Nature & Waterfalls",
+        "tagline": "The Abode of Clouds: Bio-engineered living root bridges, crystal rivers, and thunderous waterfalls",
+        "rating": 4.97,
+        "reviewsCount": 3100,
+        "priceLevel": "₹₹",
+        "entryFee": 50,
+        "currency": "INR",
+        "bestTimeToVisit": "October to April (Crystal-clear Dawki water) & June-Sept (Monsoon roaring waterfalls)",
+        "weather": {"temp": "18°C", "condition": "Cool Mist & Clear", "icon": "cloud-sun"},
+        "coordinates": {"lat": 25.2986, "lng": 91.5822},
+        "heroImage": "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Meghalaya ('Abode of Clouds') is a lush green paradise in Northeast India. Famous for the unique indigenous Khasi living root bridges bio-engineered over centuries from rubber tree roots, the crystal-clear glass-like Umngot River in Dawki, and Nohkalikai, India's tallest plunge waterfall.",
+        "howToReach": {
+            "flight": "Umroi Airport (SHL) in Shillong (30 km) or Lokpriya Gopinath Bordoloi International Airport (GAU) in Guwahati (120 km, 3 hrs scenic four-lane highway to Shillong).",
+            "train": "Guwahati Railway Station (GHY) is the major rail junction connecting all Indian states.",
+            "road": "Guwahati-Shillong Highway (NH-6) is a scenic 4-lane mountain road with picturesque pine forests and roadside Khasi tea huts."
+        },
+        "itineraries": [
+            {
+                "duration": "3-4 Days (Shillong & Cherrapunji)",
+                "plan": [
+                    {"day": "Day 1", "title": "Guwahati to Shillong", "activities": "Stop at majestic Umiam Lake (Barapani), explore Police Bazar, Don Bosco Museum, and sunset at Shillong Peak."},
+                    {"day": "Day 2", "title": "Waterfalls of Sohra (Cherrapunji)", "activities": "Visit Nohkalikai Falls (340m plunge), Mawsmai limestone cave walk, and Seven Sisters Falls."},
+                    {"day": "Day 3", "title": "Double Decker Root Bridge Trek", "activities": "Trek 3,500 stone steps down to the iconic Nongriat Double Decker Living Root Bridge and swim in the blue natural lagoon."},
+                    {"day": "Day 4", "title": "Dawki Glass River & Mawlynnong", "activities": "Boating on transparent Dawki river (feels like floating on air), walk in Mawlynnong (Asia's cleanest village)."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Trek down the jungle gorge to the century-old Double Decker Living Root Bridge in Nongriat",
+            "Take a wooden boat ride on the crystal-clear Umngot River in Dawki where the riverbed is visible 20ft deep",
+            "Stand at the edge of Nohkalikai Falls, the tallest plunge waterfall in India dropping 1,115 feet",
+            "Explore Mawlynnong village, awarded the cleanest village in Asia with single-use plastic ban"
+        ],
+        "ticketTiers": [
+            {"id": "mg-dawki", "name": "Dawki Umngot River Boat Ride", "price": 800, "desc": "1-hour boat ride on the transparent glass river with life jackets up to Bangladesh border point"},
+            {"id": "mg-caves", "name": "Mawsmai & Arwah Prehistoric Caves Entry", "price": 100, "desc": "Pass to explore natural limestone stalactites and fossilized marine formations"},
+            {"id": "mg-guide", "name": "Nongriat Living Root Bridge Guide", "price": 1200, "desc": "Certified local Khasi forest guide for the 3,500-step trek down and up to Rainbow Falls"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-mg-1",
+                "name": "Polo Orchid Resort Cherrapunji",
+                "stars": 4,
+                "rating": 4.8,
+                "distance": "Near Nohsngithiang Falls",
+                "pricePerNight": 9500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Seven Sisters Falls Views", "Infinity Plunge Pool", "Rainforest Log Cabins", "Multi-Cuisine Sky Grill"]
+            },
+            {
+                "id": "h-mg-2",
+                "name": "Ri Kynjai - Serenity by the Lake",
+                "stars": 5,
+                "rating": 4.92,
+                "distance": "Umiam Lake, Shillong (20 km)",
+                "pricePerNight": 14000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Khasi Thatched Architecture", "Umiam Lake Panorama", "Herbal Wellness Spa", "Private Pine Forest Walks"]
+            },
+            {
+                "id": "h-mg-3",
+                "name": "Cherrapunjee Holiday Resort",
+                "stars": 3,
+                "rating": 4.5,
+                "distance": "Laitkynsew Village (16 km from town)",
+                "pricePerNight": 3800,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Pioneer in Living Root Bridge Tourism", "Home-Cooked Khasi Food", "Trek Guides", "Clean Mountain Views"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-mg-1",
+                "name": "Dawki Umngot Glass River",
+                "category": "Crystal Clear Border River & Boating",
+                "distance": "85 km south of Shillong",
+                "rating": 4.95,
+                "image": "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=80",
+                "description": "Famed turquoise river so transparent that boats appear suspended in mid-air over rocks and fish."
+            },
+            {
+                "id": "p-mg-2",
+                "name": "Mawlynnong Cleanest Village",
+                "category": "Eco Village & Tree Houses",
+                "distance": "78 km from Shillong",
+                "rating": 4.75,
+                "image": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80",
+                "description": "Immaculate flower-lined village with 100% literacy rate and sky walks overlooking Bangladesh plains."
+            },
+            {
+                "id": "p-mg-3",
+                "name": "Laitlum Canyons ('End of the World')",
+                "category": "Dramatic Canyon Gorge & Cloud Vistas",
+                "distance": "22 km south of Shillong",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+                "description": "Perched on precipitous cliffs overlooking endless green valleys cloaked in swirling white clouds."
+            }
+        ]
+    },
+    {
+        "id": "hampi-vijayanagara-ruins",
+        "name": "Hampi (Vijayanagara Empire Ruins)",
+        "state": "Karnataka",
+        "region": "South India",
+        "category": "Historical Heritage & Wonder",
+        "tagline": "The City of Boulders: 14th-century temple ruins, iconic stone chariot, and surreal boulder hills",
+        "rating": 4.96,
+        "reviewsCount": 4200,
+        "priceLevel": "₹",
+        "entryFee": 40,
+        "currency": "INR",
+        "bestTimeToVisit": "October to March (Comfortable daytime winter weather)",
+        "weather": {"temp": "26°C", "condition": "Sunny & Dry", "icon": "sun"},
+        "coordinates": {"lat": 15.3350, "lng": 76.4600},
+        "heroImage": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "A UNESCO World Heritage site that was once the prosperous capital of the Vijayanagara Empire in the 14th century. Spread across 4,100 hectares of otherworldly giant granite boulder landscapes, it features the iconic Vijaya Vittala Stone Chariot, musical pillars, and the sacred active Virupaksha Temple on the Tungabhadra River.",
+        "howToReach": {
+            "flight": "Jindal Vijayanagar Airport (VDY) in Toranagallu (40 km from Hampi) or Hubbali Airport (HBX, 140 km). Flights connect to Bengaluru and Hyderabad.",
+            "train": "Hosapete Junction (HPT) is just 13 km from Hampi. Direct overnight express trains run daily from Bengaluru (Hampi Express), Goa, and Hyderabad.",
+            "road": "Connected via NH-50 and NH-67. Smooth 4-lane highway from Bengaluru (340 km, approx. 6 hrs drive)."
+        },
+        "itineraries": [
+            {
+                "duration": "2 Days (Weekend Ruins Highlights)",
+                "plan": [
+                    {"day": "Day 1", "title": "Sacred Center & Royal Ruins", "activities": "Virupaksha Temple morning blessing with temple elephant Lakshmi, climb Matanga Hill for 360° panorama, explore Lotus Mahal and Elephant Stables."},
+                    {"day": "Day 2", "title": "Stone Chariot & Coracle Boat Ride", "activities": "Vijaya Vittala Temple and the iconic Stone Chariot, musical pillars hall, circular coracle boat ride on Tungabhadra river at sunset."}
+                ]
+            },
+            {
+                "duration": "3-4 Days (Hippy Island & Bouldering)",
+                "plan": [
+                    {"day": "Day 1", "title": "Classic Hampi Monuments", "activities": "Vittala Temple, Stone Chariot, Queen's Bath, Hazara Rama Temple with Ramayana friezes."},
+                    {"day": "Day 2", "title": "Anegundi & Monkey Temple", "activities": "Cross river to Anegundi (mythological Kishkindha), climb 575 steps to Anjaneya Hill for epic sunset over boulder terrain."},
+                    {"day": "Day 3", "title": "Bouldering & Sanapur Lake", "activities": "Cliff jumping and cliffside cafe hopping around Sanapur Lake, explore prehistoric cave paintings."},
+                    {"day": "Day 4", "title": "Hemakuta Sunrise & Farewell", "activities": "Sunrise atop Hemakuta Hill overlooking Virupaksha gopuram, shop banana-fiber handicrafts."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Admire the monumental 16th-century Stone Chariot carved from monolithic granite slabs",
+            "Take a traditional circular bamboo-and-tar coracle boat ride along the roaring Tungabhadra River",
+            "Climb Matanga Hill or Hemakuta Hill at sunrise for an unforgettable golden hour over ancient ruins",
+            "Explore the Royal Enclosure featuring the stepped tank (Pushkarani) and Queen's Bath"
+        ],
+        "ticketTiers": [
+            {"id": "hp-asi", "name": "ASI Hampi Monuments Pass", "price": 40, "desc": "Official access to Vijaya Vittala Temple Stone Chariot, Lotus Mahal, and Zenana Enclosure"},
+            {"id": "hp-coracle", "name": "Tungabhadra Coracle Boat Ride", "price": 300, "desc": "30-minute traditional circular boat ride down ancient rocky river rapids"},
+            {"id": "hp-guide", "name": "Certified ASI Heritage Historian Tour", "price": 1200, "desc": "Half-day guided walking exploration unravelling the rich architectural history"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-hp-1",
+                "name": "Evolve Back, Kamalapura Palace Hampi",
+                "stars": 5,
+                "rating": 4.96,
+                "distance": "4 km from Royal Enclosure",
+                "pricePerNight": 26000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Palatial Vijayanagara Architecture", "Private Jacuzzis", "Infinity Olympic Pool", "Heritage Trails"]
+            },
+            {
+                "id": "h-hp-2",
+                "name": "Heritage Resort Hampi",
+                "stars": 4,
+                "rating": 4.75,
+                "distance": "6 km from Virupaksha Temple",
+                "pricePerNight": 7500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Organic Farm Setting", "Ayurvedic Spa", "Outdoor Swimming Pool", "Traditional South Indian Thalis"]
+            },
+            {
+                "id": "h-hp-3",
+                "name": "KSTDC Hotel Mayura Bhuvaneshwari Hampi",
+                "stars": 3,
+                "rating": 4.4,
+                "distance": "Kamalapura (1.5 km to ruins)",
+                "pricePerNight": 2600,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Government Run Reliable Stay", "Close to Archaeological Museum", "AC Family Rooms", "Restaurant"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-hp-1",
+                "name": "Sanapur Lake & Bouldering Cliffs",
+                "category": "Reservoir, Cliff Jumping & Bouldering",
+                "distance": "12 km across Tungabhadra River",
+                "rating": 4.85,
+                "image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80",
+                "description": "Secluded sapphire lake flanked by monolithic boulders where travelers relax on coracles and boulders."
+            },
+            {
+                "id": "p-hp-2",
+                "name": "Anjaneya Hill (Birthplace of Lord Hanuman)",
+                "category": "Sacred Hilltop & 575 Rock Steps",
+                "distance": "10 km in Anegundi",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&w=800&q=80",
+                "description": "White mountain temple honoring Lord Hanuman with panoramic views of the green paddy fields and river."
+            },
+            {
+                "id": "p-hp-3",
+                "name": "Daroji Sloth Bear Sanctuary",
+                "category": "Protected Wildlife Sanctuary",
+                "distance": "18 km from Hampi",
+                "rating": 4.6,
+                "image": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80",
+                "description": "First sanctuary in Asia established exclusively for the preservation of free-roaming Indian sloth bears."
+            }
+        ]
+    },
+    {
+        "id": "kashmir-gulmarg-srinagar",
+        "name": "Kashmir (Srinagar & Gulmarg)",
+        "state": "Jammu & Kashmir",
+        "region": "Himalayas & North",
+        "category": "Snow & Alpine Valleys",
+        "tagline": "Paradise on Earth: Cedar pine forests, mirror-like Dal Lake shikaras, and world's highest cable car",
+        "rating": 4.98,
+        "reviewsCount": 6100,
+        "priceLevel": "₹₹",
+        "entryFee": 50,
+        "currency": "INR",
+        "bestTimeToVisit": "March to May (Tulip gardens & green meadows) & Dec to Feb (Snow wonderland & skiing)",
+        "weather": {"temp": "12°C", "condition": "Alpine Chill & Clear", "icon": "snowflake"},
+        "coordinates": {"lat": 34.0837, "lng": 74.7973},
+        "heroImage": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "Famed through the centuries as 'Paradise on Earth', Kashmir mesmerizes with the floating lifestyle of Dal Lake in intricately carved cedar houseboats and colorful shikaras. Gulmarg ('Meadow of Flowers') boasts the world's second highest operating cable car and powder-snow ski slopes.",
+        "howToReach": {
+            "flight": "Sheikh ul-Alam International Airport (SXR) in Srinagar. Direct daily flights connect from Delhi (1 hr 20 min), Mumbai, Bengaluru, and Chandigarh.",
+            "train": "Udhampur / Jammu Tawi railway station, connected to Srinagar via the newly completed world's highest railway bridge over Chenab River on the USBRL line.",
+            "road": "Connected via Jammu-Srinagar National Highway (NH-44) through the historic Chenani-Nashri and Banihal Qazigund road tunnels."
+        },
+        "itineraries": [
+            {
+                "duration": "3 Days (Classic Kashmir Highlights)",
+                "plan": [
+                    {"day": "Day 1", "title": "Dal Lake & Mughal Gardens", "activities": "Shikara ride on Dal Lake passing floating lotus gardens, visit Shalimar Bagh and Nishat Bagh built by Emperor Jahangir."},
+                    {"day": "Day 2", "title": "Gulmarg Alpine Gondola", "activities": "Drive to Gulmarg, ride Phase 1 & Phase 2 Gondola to Apharwat Peak (14,400 ft) for snow skiing and views of Nanga Parbat."},
+                    {"day": "Day 3", "title": "Old Srinagar Heritage & Crafts", "activities": "Walk through Jamia Masjid, shop authentic Kashmiri saffron, walnuts, and hand-knotted silk carpets."}
+                ]
+            },
+            {
+                "duration": "5-6 Days (Srinagar, Gulmarg & Pahalgam)",
+                "plan": [
+                    {"day": "Day 1", "title": "Arrival & Houseboat Check-in", "activities": "Check into luxury carved cedar houseboat on Nigeen Lake, evening sunset shikara ride."},
+                    {"day": "Day 2", "title": "Gulmarg Mountain Adventure", "activities": "Full-day snow excursion in Gulmarg, snowmobiling, and hot Kahwa tea in cozy pine chalets."},
+                    {"day": "Day 3", "title": "Pahalgam Valley of Shepherds", "activities": "Drive to Pahalgam passing purple saffron fields of Pampore and walnut groves along Lidder River."},
+                    {"day": "Day 4", "title": "Betaab Valley & Aru Valley", "activities": "Horse ride to Baisaran Meadow ('Mini Switzerland') and walk through dense pine forests of Betaab Valley."},
+                    {"day": "Day 5", "title": "Sonamarg Meadow of Gold & Departure", "activities": "Visit Thajiwas Glacier in Sonamarg with pony rides up to glacial ice tongues."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Ride the world's second highest cable car (Gulmarg Gondola) reaching 14,400 feet at Apharwat Peak",
+            "Stay overnight in an authentic hand-carved cedar wooden houseboat on tranquil Nigeen Lake",
+            "Take an early morning Shikara ride to the floating vegetable market on Dal Lake",
+            "Sip authentic Kashmiri Kahwa tea infused with real saffron, crushed almonds, and cardamom"
+        ],
+        "ticketTiers": [
+            {"id": "km-gondola1", "name": "Gulmarg Gondola Phase 1 (Kongdoori)", "price": 810, "desc": "Cable car ascent to 10,000 feet Kongdoori mountain meadow"},
+            {"id": "km-gondola2", "name": "Gulmarg Gondola Phase 2 (Apharwat Peak)", "price": 1020, "desc": "Summit cable car ascent to 14,400 feet with snow sports and panoramic Himalayan views"},
+            {"id": "km-shikara", "name": "Dal Lake Private 2-Hour Shikara Cruise", "price": 700, "desc": "Traditional hand-paddled wooden boat ride exploring Char Chinar, floating shops, and lotus gardens"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-km-1",
+                "name": "The Khyber Himalayan Resort & Spa",
+                "stars": 5,
+                "rating": 4.96,
+                "distance": "Gulmarg (Minutes from Gondola)",
+                "pricePerNight": 28000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Direct Apharwat Peak Snow Views", "Heated Glass-Enclosed Pool", "L'Occitane Spa", "Ski Storage"]
+            },
+            {
+                "id": "h-km-2",
+                "name": "Sukoon Luxury Houseboat",
+                "stars": 5,
+                "rating": 4.9,
+                "distance": "Dal Lake, Srinagar",
+                "pricePerNight": 14500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Eco-Luxury Handcrafted Cedar Boat", "Rooftop Stargazing Deck", "Wazwan Royal Cuisine", "Private Shikara Pickup"]
+            },
+            {
+                "id": "h-km-3",
+                "name": "Nedou's Hotel Gulmarg (1888)",
+                "stars": 4,
+                "rating": 4.65,
+                "distance": "1 km from Gulmarg Golf Course",
+                "pricePerNight": 7800,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["135-Year-Old Colonial Heritage", "Warm Wood Fireplaces", "Lush Pine Lawns", "Bakery Cafe"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-km-1",
+                "name": "Betaab Valley & Lidder River",
+                "category": "Verdant Alpine Valley & Rushing Stream",
+                "distance": "15 km from Pahalgam",
+                "rating": 4.9,
+                "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+                "description": "Picturesque meadow surrounded by dense deodar pine forests named after the famous Bollywood film Betaab."
+            },
+            {
+                "id": "p-km-2",
+                "name": "Indira Gandhi Memorial Tulip Garden",
+                "category": "Largest Tulip Garden in Asia",
+                "distance": "Cheshma Shahi, Srinagar",
+                "rating": 4.95,
+                "image": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80",
+                "description": "Terraced garden on the slopes of Zabarwan mountains blooming with over 1.5 million colorful tulips in spring."
+            },
+            {
+                "id": "p-km-3",
+                "name": "Sonamarg Thajiwas Glacier",
+                "category": "Permanent Snow Mountain Glacier",
+                "distance": "80 km northeast of Srinagar",
+                "rating": 4.8,
+                "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+                "description": "Spectacular summer glacier nestled in high mountain cirques with rushing meltwater streams and pony treks."
+            }
+        ]
+    },
+    {
+        "id": "andaman-havelock-island",
+        "name": "Andaman Islands (Havelock / Swaraj Dweep)",
+        "state": "Andaman & Nicobar Islands",
+        "region": "Islands & Coast",
+        "category": "Tropical & Coral Reefs",
+        "tagline": "Pristine white sand beaches, vibrant coral reefs, and Asia's best Radhanagar Beach",
+        "rating": 4.98,
+        "reviewsCount": 4600,
+        "priceLevel": "₹₹₹",
+        "entryFee": 0,
+        "currency": "INR",
+        "bestTimeToVisit": "October to May (Calm turquoise seas & prime scuba visibility)",
+        "weather": {"temp": "29°C", "condition": "Tropical Sea Breeze", "icon": "sun"},
+        "coordinates": {"lat": 11.9761, "lng": 92.9876},
+        "heroImage": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1200&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1000&q=80"
+        ],
+        "description": "An archipelago of emerald islands in the Bay of Bengal. Swaraj Dweep (Havelock) is world-renowned for Radhanagar Beach (Beach No. 7), consistently ranked among the top 10 most beautiful beaches on Earth with silky white sand, gentle turquoise surf, and dense tropical rainforest.",
+        "howToReach": {
+            "flight": "Veer Savarkar International Airport (IXZ) in Port Blair. Direct flights from Delhi, Mumbai, Kolkata, Chennai, and Bengaluru.",
+            "train": "Rail access via Chennai or Kolkata, followed by domestic flight or passenger cruise ship to Port Blair.",
+            "road": "High-speed private luxury catamarans (Makruzz, Green Ocean, Nautika) connect Port Blair to Havelock Island in 90 minutes."
+        },
+        "itineraries": [
+            {
+                "duration": "3-4 Days (Havelock & Coral Beach)",
+                "plan": [
+                    {"day": "Day 1", "title": "Catamaran to Havelock & Sunset", "activities": "Speed boat transfer from Port Blair, check into beach resort, late afternoon sunset walk on Radhanagar Beach."},
+                    {"day": "Day 2", "title": "Scuba Diving & Coral Safari", "activities": "PADI introductory scuba diving session at Nemo Reef, afternoon sea-karting and water sports at Elephant Beach."},
+                    {"day": "Day 3", "title": "Kalapathar Beach & Mangroves", "activities": "Sunrise at Kalapathar Beach with black volcanic rocks, kayak through mangrove tunnels."}
+                ]
+            },
+            {
+                "duration": "5-6 Days (Port Blair, Havelock & Neil Island)",
+                "plan": [
+                    {"day": "Day 1", "title": "Historic Cellular Jail", "activities": "Arrive Port Blair, visit Cellular Jail National Memorial, evening Sound & Light show on Indian freedom struggle."},
+                    {"day": "Day 2", "title": "Havelock Island Transfer", "activities": "Makruzz ferry to Havelock, afternoon relaxation under mahua trees at Radhanagar Beach."},
+                    {"day": "Day 3", "title": "Elephant Beach Coral Snorkel", "activities": "Speed boat or jungle trek to Elephant Beach, glass-bottom boat tour and sea walking on the ocean floor."},
+                    {"day": "Day 4", "title": "Neil Island (Shaheed Dweep)", "activities": "Ferry to Neil Island, explore natural rock formation (Howrah Bridge) and sunset at Laxmanpur Beach."},
+                    {"day": "Day 5", "title": "Ross Island (Netaji Subhash Dweep)", "activities": "Return to Port Blair, day visit to historic British colonial ruins and friendly deer at Ross Island."}
+                ]
+            }
+        ],
+        "thingsToDo": [
+            "Walk on the silky powdery sands of Radhanagar Beach during golden hour sunset",
+            "Scuba dive amidst colorful coral reefs, clownfish, turtles, and manta rays at Nemo Reef",
+            "Night bioluminescence kayaking where the sea glows with electric blue light at every paddle stroke",
+            "Visit the historic Cellular Jail in Port Blair and honor freedom fighters at the eternal flame"
+        ],
+        "ticketTiers": [
+            {"id": "an-makruzz", "name": "Makruzz Luxury Catamaran Ferry (Port Blair to Havelock)", "price": 1450, "desc": "Air-conditioned high-speed ocean transit (90 min) with plush seating"},
+            {"id": "an-scuba", "name": "Certified Discover Scuba Diving (DSD) Experience", "price": 3500, "desc": "1-on-1 PADI dive master guide, complete scuba gear, underwater HD photos and 4K video"},
+            {"id": "an-jail", "name": "Cellular Jail Sound & Light Show Pass", "price": 150, "desc": "Evening grand patriotic light & sound narration of Veer Savarkar and freedom struggle"}
+        ],
+        "nearbyHotels": [
+            {
+                "id": "h-an-1",
+                "name": "Taj Exotica Resort & Spa, Andamans",
+                "stars": 5,
+                "rating": 4.97,
+                "distance": "Radhanagar Beach frontage (0 km)",
+                "pricePerNight": 34000,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["46-Acre Virgin Forest Estate", "Olympic Size Infinity Pool", "Direct Radhanagar Beach Access", "Jiva Ayurvedic Spa"]
+            },
+            {
+                "id": "h-an-2",
+                "name": "Barefoot at Havelock",
+                "stars": 4,
+                "rating": 4.85,
+                "distance": "Radhanagar Beach (Forest Pathway)",
+                "pricePerNight": 11500,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Eco-Friendly Thatched Cottages", "No Television Digital Detox", "Tropical Forest Lounge", "Private Dive Center"]
+            },
+            {
+                "id": "h-an-3",
+                "name": "Symphony Palms Beach Resort",
+                "stars": 4,
+                "rating": 4.6,
+                "distance": "Govind Nagar Beach (Private beach)",
+                "pricePerNight": 6200,
+                "currency": "INR",
+                "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+                "amenities": ["Direct Coral Beachfront", "Ocean View Wooden Cottages", "Venom Beach Bar", "Free Wi-Fi"]
+            }
+        ],
+        "nearbyPlaces": [
+            {
+                "id": "p-an-1",
+                "name": "Elephant Beach & Coral Reefs",
+                "category": "Water Sports & Coral Snorkeling Hub",
+                "distance": "20 min speed boat from Havelock Jetty",
+                "rating": 4.85,
+                "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
+                "description": "Shallow crystal reef sanctuary with vibrant clownfish, sea turtles, and colorful marine life."
+            },
+            {
+                "id": "p-an-2",
+                "name": "Kalapathar Beach",
+                "category": "Black Volcanic Rocks & Aqua Waters",
+                "distance": "6.5 km from Havelock village",
+                "rating": 4.7,
+                "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+                "description": "Dramatic contrasting shore of jet-black volcanic boulders against brilliant turquoise sea."
+            },
+            {
+                "id": "p-an-3",
+                "name": "Natural Living Rock Bridge (Neil Island)",
+                "category": "Geological Coastal Rock Arch",
+                "distance": "Shaheed Dweep (Laxmanpur Beach)",
+                "rating": 4.8,
+                "image": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=800&q=80",
+                "description": "Massive natural limestone arch formation carved by sea waves exposed during low tide."
+            }
+        ]
+    }
+]
+
+with open(os.path.join("data", "destinations.json"), "w", encoding="utf-8") as f:
+    json.dump(india_destinations, f, indent=2, ensure_ascii=False)
+
+print(f"Generated {len(india_destinations)} comprehensive India destinations.")

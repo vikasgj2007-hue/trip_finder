@@ -1,0 +1,145 @@
+/* BharatYatra - India Tourist Place Finder, Roadmaps & Travel Management */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --saffron: #f97316;
+  --saffron-dark: #ea580c;
+  --peacock: #0284c7;
+  --india-green: #15803d;
+  --gold: #eab308;
+  --surface: #ffffff;
+  --bg-soft: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  background-color: #f8fafc;
+}
+
+h1, h2, h3, h4, h5, .font-heading {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Responsive Container Adjustments */
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.1rem !important;
+    line-height: 1.25 !important;
+  }
+}
+
+/* Travel Card Styling */
+.india-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+.india-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px -8px rgba(15, 23, 42, 0.12);
+}
+
+/* Timeline Roadmaps Styling */
+.timeline-stem {
+  position: relative;
+}
+.timeline-stem::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 17px;
+  width: 2px;
+  background: #e2e8f0;
+  z-index: 0;
+}
+
+/* Perforated Boarding Pass */
+.ticket-voucher {
+  background: white;
+  border-radius: 1.25rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-notch-left, .ticket-notch-right {
+  position: absolute;
+  top: 68%;
+  width: 24px;
+  height: 24px;
+  background-color: #0f172a;
+  border-radius: 50%;
+  z-index: 10;
+}
+.ticket-notch-left { left: -12px; }
+.ticket-notch-right { right: -12px; }
+
+.ticket-dashed-line {
+  position: absolute;
+  top: calc(68% + 11px);
+  left: 20px;
+  right: 20px;
+  border-bottom: 2px dashed #cbd5e1;
+  z-index: 5;
+}
+
+/* Leaflet Map Responsive Containers */
+#leaflet-map {
+  height: 480px;
+  width: 100%;
+  border-radius: 1.25rem;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  #leaflet-map {
+    height: 340px;
+  }
+}
+
+#roadmap-mini-map {
+  height: 300px;
+  width: 100%;
+  border-radius: 1rem;
+  z-index: 1;
+}
+
+/* Print styling */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #ticket-printable, #ticket-printable * {
+    visibility: visible;
+  }
+  #ticket-printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

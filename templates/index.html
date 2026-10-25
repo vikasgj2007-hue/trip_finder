@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BharatYatra | India Tourist Place Finder & Smart Roadmaps</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-orange-500 selection:text-white pb-16 lg:pb-0">
+
+  <!-- ============================================================ -->
+  <!-- Clean & Friendly Navigation Header -->
+  <!-- ============================================================ -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-3">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-2.5 sm:gap-3 group">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/25 group-hover:scale-105 transition-transform">
+          <i class="fa-solid fa-om text-lg sm:text-xl"></i>
+        </div>
+        <div>
+          <span class="text-xl sm:text-2xl font-black font-heading tracking-tight bg-gradient-to-r from-slate-950 via-slate-800 to-orange-600 bg-clip-text text-transparent">
+            BharatYatra
+          </span>
+          <span class="block text-[10px] sm:text-[11px] font-bold text-orange-600 tracking-wider uppercase -mt-1">
+            Incredible India Explorer
+          </span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden lg:flex items-center gap-1.5 font-bold text-xs sm:text-sm text-slate-600">
+        <button onclick="scrollToSection('places-section')" class="px-3.5 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">
+          <i class="fa-solid fa-compass text-orange-500 mr-1.5"></i> Beautiful Places
+        </button>
+        <button onclick="scrollToSection('roadmap-hub-section')" class="px-3.5 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">
+          <i class="fa-solid fa-route text-sky-500 mr-1.5"></i> Travel Roadmaps
+        </button>
+        <button onclick="scrollToSection('map-section')" class="px-3.5 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">
+          <i class="fa-solid fa-map-location-dot text-emerald-500 mr-1.5"></i> India Map
+        </button>
+        <button onclick="scrollToSection('bookings-section')" class="px-3.5 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition relative">
+          <i class="fa-solid fa-ticket text-rose-500 mr-1.5"></i> My Passes
+          <span id="nav-bookings-count" class="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white shadow-sm">
+            2
+          </span>
+        </button>
+      </nav>
+
+      <!-- Header Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button 
+          onclick="openAddPlaceModal()" 
+          class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+        >
+          <i class="fa-solid fa-plus text-orange-600"></i>
+          <span>Add Place</span>
+        </button>
+
+        <button 
+          onclick="scrollToSection('places-section')" 
+          class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-xs sm:text-sm font-bold transition shadow-sm shadow-orange-600/30 flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span>Search Places</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- Hero Section: Warm, Simple & Inviting -->
+  <!-- ============================================================ -->
+  <section class="relative pt-10 pb-16 sm:pt-14 sm:pb-24 overflow-hidden bg-slate-900 text-white">
+    <!-- Hero Background Image -->
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1920&q=80" 
+        alt="Incredible India" 
+        class="w-full h-full object-cover opacity-25 filter brightness-90"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/70 to-slate-900"></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      
+      <!-- India Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-amber-300 mb-5 shadow-sm">
+        <span class="flex h-2 w-2 rounded-full bg-orange-500 animate-pulse"></span>
+        <span>Explore Incredible India (भारत दर्शन)</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="hero-title text-3xl sm:text-5xl md:text-6xl font-black font-heading tracking-tight leading-tight mb-4">
+        Beautiful Places in India. <br class="hidden sm:block" />
+        <span class="bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-200 bg-clip-text text-transparent">
+          Instant Roadmaps & Trip Suggestions.
+        </span>
+      </h1>
+
+      <p class="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
+        Type any location in India to view breathtaking pictures, flight/train/road routes, and day-by-day itineraries tailored for your trip lifespan.
+      </p>
+
+      <!-- Simple, Large & Accessible Search Bar -->
+      <div class="max-w-3xl mx-auto bg-white p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/60 text-slate-800">
+        <div class="flex flex-col sm:flex-row items-center gap-2">
+          
+          <!-- Search Input -->
+          <div class="relative flex-1 w-full text-left">
+            <i class="fa-solid fa-magnifying-glass-location text-orange-500 text-base absolute left-4 top-3.5"></i>
+            <input 
+              type="text" 
+              id="global-search-input" 
+              placeholder="Type a place, city or state (e.g. Jaipur, Kerala, Ladakh, Varanasi, Goa)..." 
+              class="w-full pl-11 pr-4 py-3 bg-slate-50 focus:bg-white text-slate-900 rounded-xl text-sm sm:text-base font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+            />
+          </div>
+
+          <!-- Search Button -->
+          <button 
+            onclick="scrollToSection('places-section')" 
+            class="w-full sm:w-auto px-6 py-3 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold text-sm sm:text-base rounded-xl transition shadow-md shadow-orange-600/30 flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-route"></i>
+            <span>Find Roadmaps</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Quick One-Click Indian Locations -->
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-300">
+        <span class="font-semibold text-slate-400">Popular destinations:</span>
+        <button onclick="quickSearchLocation('Jaipur')" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition">
+          🏰 Jaipur
+        </button>
+        <button onclick="quickSearchLocation('Kerala')" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition">
+          🌴 Kerala Backwaters
+        </button>
+        <button onclick="quickSearchLocation('Varanasi')" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition">
+          🛕 Varanasi Ghats
+        </button>
+        <button onclick="quickSearchLocation('Ladakh')" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition">
+          🏔️ Ladakh Pangong
+        </button>
+        <button onclick="quickSearchLocation('Goa')" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition">
+          🏖️ Goa Beaches
+        </button>
+        <button onclick="quickSearchLocation('Kashmir')" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition">
+          ❄️ Kashmir Gulmarg
+        </button>
+        <button onclick="quickSearchLocation('Agra')" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition">
+          🏛️ Taj Mahal
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="mt-12 max-w-5xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 sm:p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 text-center">
+        <div>
+          <span id="stat-destinations" class="text-2xl sm:text-3xl font-black font-heading text-white block">12+</span>
+          <span class="text-xs text-slate-300">Iconic Destinations</span>
+        </div>
+        <div>
+          <span id="stat-states" class="text-2xl sm:text-3xl font-black font-heading text-amber-300 block">8 States</span>
+          <span class="text-xs text-slate-300">Across India</span>
+        </div>
+        <div>
+          <span id="stat-bookings" class="text-2xl sm:text-3xl font-black font-heading text-emerald-400 block">45+ Passes</span>
+          <span class="text-xs text-slate-300">Instant QR Passes</span>
+        </div>
+        <div>
+          <span id="stat-rating" class="text-2xl sm:text-3xl font-black font-heading text-orange-400 block">4.96 ★</span>
+          <span class="text-xs text-slate-300">Traveler Happiness</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Quick Roadmap Finder Bar -->
+  <!-- ============================================================ -->
+  <section id="roadmap-hub-section" class="py-6 bg-orange-600 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3 text-center sm:text-left">
+        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-lg flex-shrink-0">
+          <i class="fa-solid fa-map"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-sm sm:text-base font-heading">Need an instant trip roadmap & suggestions?</h3>
+          <p class="text-xs text-orange-100">Select any place below to see how to reach, day-by-day plans, and things to do.</p>
+        </div>
+      </div>
+
+      <!-- Quick Selector Dropdown -->
+      <div class="w-full sm:w-72">
+        <div class="relative">
+          <select 
+            id="roadmap-quick-selector" 
+            class="w-full px-4 py-2.5 bg-white text-slate-800 text-xs sm:text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-300 appearance-none cursor-pointer shadow-sm"
+          >
+            <!-- Populated dynamically -->
+          </select>
+          <i class="fa-solid fa-chevron-down text-slate-500 absolute right-3.5 top-3.5 text-xs pointer-events-none"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Tourist Places Finder & Discovery Grid -->
+  <!-- ============================================================ -->
+  <section id="places-section" class="py-12 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Section Header -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-orange-600"></span>
+          <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Explore Bharat</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 font-heading">
+          Handpicked Beautiful Places in India
+        </h2>
+        <p class="text-slate-500 text-xs sm:text-sm mt-1">
+          Click any destination to view its complete roadmap, day-by-day plans, hotels, and ticket options.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span id="results-count" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-orange-50 text-orange-800 border border-orange-100">
+          12 Places Found
+        </span>
+        <button onclick="resetFilters()" class="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Pills Filter Bar -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-4 no-scrollbar">
+      <button data-category="all" class="category-pill active-cat px-3.5 py-2 rounded-xl text-xs font-bold bg-orange-600 text-white whitespace-nowrap transition shadow-sm">
+        All Categories
+      </button>
+      <button data-category="Heritage & Forts" class="category-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:border-orange-400 whitespace-nowrap transition shadow-sm">
+        🏰 Heritage & Forts
+      </button>
+      <button data-category="Hills, Tea & Backwaters" class="category-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:border-orange-400 whitespace-nowrap transition shadow-sm">
+        🍃 Hills & Backwaters
+      </button>
+      <button data-category="Spiritual & Ancient Heritage" class="category-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:border-orange-400 whitespace-nowrap transition shadow-sm">
+        🛕 Spiritual & Ghats
+      </button>
+      <button data-category="High-Altitude Mountains" class="category-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:border-orange-400 whitespace-nowrap transition shadow-sm">
+        🏔️ High Himalayas
+      </button>
+      <button data-category="Beaches & Coastal Life" class="category-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:border-orange-400 whitespace-nowrap transition shadow-sm">
+        🏖️ Coastal Beaches
+      </button>
+      <button data-category="Nature & Waterfalls" class="category-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:border-orange-400 whitespace-nowrap transition shadow-sm">
+        🌿 Waterfalls & Forests
+      </button>
+    </div>
+
+    <!-- Region Filter Pills -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-8 no-scrollbar">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Region:</span>
+      <button data-region="all" class="region-pill active-reg px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white whitespace-nowrap transition">
+        All Regions
+      </button>
+      <button data-region="North India" class="region-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">
+        North India
+      </button>
+      <button data-region="South India" class="region-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">
+        South India
+      </button>
+      <button data-region="Himalayas & North" class="region-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">
+        Himalayas & Valleys
+      </button>
+      <button data-region="West India" class="region-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">
+        West India
+      </button>
+      <button data-region="East & North-East" class="region-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">
+        East & North-East
+      </button>
+    </div>
+
+    <!-- Places Responsive Grid -->
+    <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+      <!-- Populated dynamically by app.js -->
+    </div>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Global Interactive India Leaflet Map -->
+  <!-- ============================================================ -->
+  <section id="map-section" class="py-12 sm:py-16 bg-slate-100 border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 block mb-1">
+            Visual Map Navigation
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 font-heading">
+            Interactive India Map
+          </h2>
+          <p class="text-slate-500 text-xs sm:text-sm mt-1">
+            Click on any pin on the map to inspect destination details, roadmaps, and book passes.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-600"></span> Landmark</span>
+          <span class="text-slate-300">|</span>
+          <span>Pan & Zoom across India</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-2 sm:p-3 rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
+        <div id="leaflet-map"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- "My Bookings & Passes" Section -->
+  <!-- ============================================================ -->
+  <section id="bookings-section" class="py-12 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700 uppercase tracking-wider inline-block mb-1.5">
+          Pass Manager
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 font-heading">
+          Manage Your Booked Passes
+        </h2>
+        <p class="text-slate-500 text-xs sm:text-sm mt-1">
+          View your active entry tickets, open scannable QR passes, or reschedule visit dates.
+        </p>
+      </div>
+
+      <button 
+        onclick="scrollToSection('places-section')" 
+        class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl transition shadow self-start sm:self-auto"
+      >
+        <i class="fa-solid fa-plus mr-1"></i> Book New Pass
+      </button>
+    </div>
+
+    <!-- Bookings Cards Container -->
+    <div id="bookings-list-container" class="space-y-3.5">
+      <!-- Populated dynamically -->
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: Location Roadmap & Lifespan Itinerary Viewer -->
+  <!-- (The core user request: Roadmaps, How to reach, & Suggestions) -->
+  <!-- ============================================================ -->
+  <div id="roadmap-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-y-auto">
+    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[94vh] animate-in fade-in duration-200">
+      
+      <!-- Modal Top Bar -->
+      <div class="p-4 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div class="flex-1 pr-3">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-orange-100 text-orange-800">
+              India Travel Roadmap
+            </span>
+            <span id="roadmap-weather-badge" class="text-xs font-bold text-slate-700"></span>
+          </div>
+          <h3 id="roadmap-place-title" class="text-xl sm:text-2xl md:text-3xl font-black font-heading text-slate-900 leading-snug">
+            Destination Title
+          </h3>
+          <p id="roadmap-place-subtitle" class="text-xs text-slate-500 mt-0.5"></p>
+        </div>
+
+        <button onclick="closeModal('roadmap-modal')" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition flex-shrink-0">
+          <i class="fa-solid fa-xmark text-sm sm:text-base"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Tabs inside Roadmap Modal -->
+      <div class="flex items-center gap-1.5 p-2.5 sm:px-6 bg-slate-100 border-b border-slate-200 overflow-x-auto no-scrollbar">
+        <button id="tab-btn-itinerary" onclick="switchRoadmapTab('itinerary')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-orange-600 text-white shadow-sm">
+          ⏱️ Lifespan Itineraries
+        </button>
+        <button id="tab-btn-reach" onclick="switchRoadmapTab('reach')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200">
+          ✈️ How to Reach (Roadmaps)
+        </button>
+        <button id="tab-btn-hotels" onclick="switchRoadmapTab('hotels')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200">
+          🏨 Nearby Hotels (₹)
+        </button>
+        <button id="tab-btn-sights" onclick="switchRoadmapTab('sights')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200">
+          📍 Nearby Sights
+        </button>
+        <button id="tab-btn-gallery" onclick="switchRoadmapTab('gallery')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200">
+          📷 Photo Gallery
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
+        
+        <!-- Tab 1: Lifespan Itineraries & Suggestions -->
+        <div id="tab-content-itinerary" class="space-y-6">
+          
+          <!-- Hero Banner & Best Time -->
+          <div class="relative h-48 sm:h-64 rounded-2xl overflow-hidden shadow-inner">
+            <img id="roadmap-place-hero" src="" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            <div class="absolute bottom-3 left-3 right-3 text-white flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-300">Best Season to Visit</span>
+                <p id="roadmap-best-time" class="text-xs sm:text-sm font-extrabold"></p>
+              </div>
+              <button 
+                onclick="closeModal('roadmap-modal'); openBookingModal(state.selectedPlace ? state.selectedPlace.id : '')" 
+                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow self-start sm:self-auto"
+              >
+                Book Entry Pass
+              </button>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <h4 class="font-bold text-slate-900 text-sm sm:text-base font-heading mb-1.5">Overview & Atmosphere</h4>
+            <p id="roadmap-place-desc" class="text-xs sm:text-sm text-slate-600 leading-relaxed"></p>
+          </div>
+
+          <!-- Lifespan Duration Selector & Itinerary Timeline -->
+          <div class="pt-2 border-t border-slate-100">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-bold text-slate-900 text-sm sm:text-base font-heading flex items-center gap-1.5">
+                <i class="fa-solid fa-clock text-orange-600"></i>
+                <span>Choose Your Trip Lifespan</span>
+              </h4>
+              <span class="text-xs text-slate-400 font-medium">Select days below</span>
+            </div>
+
+            <!-- Duration Tabs (1-2 Days, 3-4 Days, etc.) -->
+            <div id="itinerary-duration-tabs" class="flex flex-wrap gap-2 mb-4"></div>
+
+            <!-- Day-by-Day Timeline Container -->
+            <div id="itinerary-days-timeline" class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90"></div>
+          </div>
+
+          <!-- Suggestions: What to Do & Eat -->
+          <div class="pt-2 border-t border-slate-100">
+            <h4 class="font-bold text-slate-900 text-sm sm:text-base font-heading mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-utensils text-amber-600"></i>
+              <span>Top Suggestions (What to Do, See & Eat)</span>
+            </h4>
+            <div id="roadmap-things-to-do" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+          </div>
+
+        </div>
+
+        <!-- Tab 2: How to Reach Roadmap (Flight, Train, Road) -->
+        <div id="tab-content-reach" class="hidden space-y-6">
+          <p class="text-xs text-slate-500">Transportation roadmaps and transit options from major Indian cities:</p>
+          <div id="roadmap-how-to-reach"></div>
+
+          <!-- Mini Map of Destination & Surroundings -->
+          <div class="pt-4 border-t border-slate-100">
+            <h4 class="font-bold text-slate-900 text-sm font-heading mb-2">Location Coordinates & Nearby Clusters</h4>
+            <div id="roadmap-mini-map"></div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Nearby Hotels (in ₹ INR) -->
+        <div id="tab-content-hotels" class="hidden space-y-4">
+          <p class="text-xs text-slate-500">Handpicked palace stays, heritage havelis, and budget hotels near this landmark:</p>
+          <div id="roadmap-hotels-list" class="space-y-3"></div>
+        </div>
+
+        <!-- Tab 4: Nearby Sights to Visit -->
+        <div id="tab-content-sights" class="hidden space-y-4">
+          <p class="text-xs text-slate-500">Surrounding viewpoints, temples, waterfalls, and nature reserves:</p>
+          <div id="roadmap-nearby-sights" class="space-y-3"></div>
+        </div>
+
+        <!-- Tab 5: Photo Showcase Gallery -->
+        <div id="tab-content-gallery" class="hidden space-y-4">
+          <div class="flex items-center justify-between">
+            <p class="text-xs text-slate-500">High-resolution photographic views of this destination:</p>
+            <span class="text-xs text-orange-600 font-bold">Click photo to expand</span>
+          </div>
+          <div id="roadmap-gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 sm:p-5 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+        <button onclick="closeModal('roadmap-modal')" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-200 transition">
+          Close Roadmap
+        </button>
+        <button 
+          onclick="closeModal('roadmap-modal'); openBookingModal(state.selectedPlace ? state.selectedPlace.id : '')" 
+          class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold transition shadow-md shadow-orange-600/30 flex items-center gap-2"
+        >
+          <i class="fa-solid fa-ticket"></i>
+          <span>Book Passes & Tours</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: Simple Ticket Booking Engine (₹ INR) -->
+  <!-- ============================================================ -->
+  <div id="booking-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in duration-200">
+      
+      <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Fast Ticket Reservation</span>
+          <h3 class="text-lg sm:text-xl font-bold font-heading text-slate-900">Book Entry / Tour Pass</h3>
+        </div>
+        <button onclick="closeModal('booking-modal')" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="booking-form" onsubmit="handleBookingFormSubmit(event)" class="overflow-y-auto p-5 sm:p-6 space-y-5 flex-1">
+        
+        <input type="hidden" id="booking-dest-id" />
+        
+        <!-- Destination Preview -->
+        <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100">
+          <img id="booking-dest-image" src="" class="w-14 h-14 rounded-xl object-cover shadow-xs flex-shrink-0" />
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h4 id="booking-dest-name" class="font-bold text-slate-900 text-sm">Destination</h4>
+              <span id="booking-dest-rating" class="text-xs font-bold text-amber-600">4.9 ★</span>
+            </div>
+            <p id="booking-dest-location" class="text-xs text-slate-500 mt-0.5"></p>
+          </div>
+        </div>
+
+        <!-- Ticket Tier -->
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Select Pass Category</label>
+          <div class="relative">
+            <select id="booking-tier-select" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-orange-500 appearance-none cursor-pointer">
+              <!-- Filled dynamically -->
+            </select>
+            <i class="fa-solid fa-chevron-down text-slate-400 absolute right-3.5 top-3.5 text-xs pointer-events-none"></i>
+          </div>
+        </div>
+
+        <!-- Date & Slot -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Visit Date</label>
+            <input type="date" id="booking-travel-date" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-orange-500" />
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Preferred Time Slot</label>
+            <div class="relative">
+              <select id="booking-time-slot" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-orange-500 appearance-none cursor-pointer">
+                <option value="06:30 AM - Sunrise Slot">06:30 AM - Sunrise Slot</option>
+                <option value="09:30 AM - Morning Slot" selected>09:30 AM - Morning Slot</option>
+                <option value="02:00 PM - Afternoon Session">02:00 PM - Afternoon Session</option>
+                <option value="05:00 PM - Sunset Tour">05:00 PM - Sunset Tour</option>
+              </select>
+              <i class="fa-solid fa-chevron-down text-slate-400 absolute right-3.5 top-3.5 text-xs pointer-events-none"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Number of Travelers -->
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Number of Travelers</label>
+          <div class="flex items-center gap-3">
+            <input type="number" id="booking-quantity" value="1" min="1" max="15" required class="w-24 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <span class="text-xs text-slate-500">Max 15 tickets per reservation pass</span>
+          </div>
+        </div>
+
+        <!-- Traveler Info -->
+        <div class="pt-2 border-t border-slate-100">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Primary Traveler Full Name</label>
+              <input type="text" id="booking-guest-name" required placeholder="e.g. Rahul Sharma" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Email Address (for QR Pass)</label>
+              <input type="email" id="booking-guest-email" required placeholder="rahul@example.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Mobile Number</label>
+              <input type="tel" id="booking-guest-phone" placeholder="+91 98765 43210" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Special Notes (Optional)</label>
+              <input type="text" id="booking-special-requests" placeholder="e.g. Hindi guide" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Price Breakdown in ₹ INR -->
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
+          <div class="flex justify-between text-slate-600">
+            <span>Pass Base (<span id="summary-unit-price">₹100</span> × <span id="summary-qty">1</span>)</span>
+            <span id="summary-subtotal" class="font-bold text-slate-800">₹100</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Convenience & Portal Fee</span>
+            <span id="summary-service-fee" class="font-bold text-slate-800">₹30</span>
+          </div>
+          <div id="summary-discount-row" class="flex justify-between text-emerald-600 font-bold hidden">
+            <span>Instant Promo Discount</span>
+            <span id="summary-discount">-₹100</span>
+          </div>
+          <div class="pt-2 border-t border-slate-200 flex justify-between text-sm font-bold text-slate-900">
+            <span>Total Payable Amount</span>
+            <span id="summary-total-price" class="text-lg font-black text-orange-600">₹130</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeModal('booking-modal')" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-100">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            id="booking-submit-btn" 
+            class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition flex items-center gap-2"
+          >
+            <i class="fa-solid fa-qrcode"></i>
+            <span>Confirm & Generate Pass</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: Perforated Boarding Pass / Ticket Voucher (₹ INR) -->
+  <!-- ============================================================ -->
+  <div id="ticket-voucher-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-md animate-in zoom-in-95 duration-200">
+      
+      <!-- Perforated Ticket Card -->
+      <div id="ticket-printable" class="ticket-voucher text-slate-800 bg-white">
+        
+        <div class="ticket-notch-left"></div>
+        <div class="ticket-notch-right"></div>
+        <div class="ticket-dashed-line"></div>
+
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-slate-950 to-orange-950 p-5 text-white flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center text-white text-sm">
+              <i class="fa-solid fa-om"></i>
+            </div>
+            <div>
+              <span class="text-sm font-black font-heading tracking-tight block">BharatYatra Pass</span>
+              <span class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">Official Entry Voucher</span>
+            </div>
+          </div>
+
+          <div class="text-right">
+            <span class="text-[9px] text-slate-400 block uppercase font-bold">Booking ID</span>
+            <span id="ticket-code-badge" class="font-mono text-xs font-black px-2 py-0.5 bg-white/10 rounded text-amber-300 border border-white/10">
+              IN-000000
+            </span>
+          </div>
+        </div>
+
+        <!-- Body Details -->
+        <div class="p-5 pb-7 space-y-4">
+          <div>
+            <h3 id="ticket-place-title" class="text-lg sm:text-xl font-black font-heading text-slate-900 leading-snug">
+              Destination
+            </h3>
+            <p id="ticket-place-location" class="text-xs text-orange-600 font-bold flex items-center gap-1 mt-0.5">
+              <i class="fa-solid fa-location-dot"></i> State, India
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <span class="text-slate-400 block text-[10px] font-bold uppercase">Traveler Name</span>
+              <span id="ticket-traveler-name" class="font-bold text-slate-900 text-sm">Aarav Sharma</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px] font-bold uppercase">Pass Category</span>
+              <span id="ticket-tier-name" class="font-bold text-slate-900 text-sm">General Pass</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px] font-bold uppercase">Visit Date</span>
+              <span id="ticket-travel-date" class="font-bold text-slate-900 text-sm">2026-11-15</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px] font-bold uppercase">Time Slot</span>
+              <span id="ticket-time-slot" class="font-bold text-slate-900 text-sm">09:30 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stub with QR Code -->
+        <div class="p-5 pt-7 bg-slate-50 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="p-1 bg-white rounded-xl border border-slate-200 shadow-xs">
+              <img id="ticket-qr-code-img" src="" alt="QR Pass" class="w-16 h-16 sm:w-18 sm:h-18" />
+            </div>
+            <div>
+              <span class="text-[9px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full inline-block mb-1">
+                Verified Pass
+              </span>
+              <span id="ticket-quantity" class="text-xs font-bold text-slate-800 block">1 Traveler</span>
+            </div>
+          </div>
+
+          <div class="text-right">
+            <span class="text-[9px] text-slate-400 block uppercase font-bold">Paid in Full</span>
+            <span id="ticket-total-paid" class="text-lg font-black text-slate-900">₹130</span>
+            <span id="ticket-barcode-num" class="font-mono text-[9px] text-slate-400 block mt-0.5">#IN-000000</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-4 flex items-center justify-between gap-2 no-print">
+        <button onclick="closeModal('ticket-voucher-modal')" class="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold backdrop-blur transition">
+          Close
+        </button>
+        <button id="ticket-print-btn" class="px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs transition shadow-lg flex items-center gap-1.5">
+          <i class="fa-solid fa-print"></i>
+          <span>Print / Save PDF</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: Add New Indian Destination (Admin) -->
+  <!-- ============================================================ -->
+  <div id="add-place-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in duration-200">
+      
+      <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Destination Registry</span>
+          <h3 class="text-lg font-bold font-heading text-slate-900">Add New Place in India</h3>
+        </div>
+        <button onclick="closeModal('add-place-modal')" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="add-place-form" class="overflow-y-auto p-5 space-y-3.5 flex-1 text-xs">
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Place Name</label>
+          <input type="text" id="new-place-name" required placeholder="e.g. Coorg (Kodagu)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">State</label>
+            <input type="text" id="new-place-state" required placeholder="e.g. Karnataka" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold" />
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Region</label>
+            <select id="new-place-region" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+              <option value="South India">South India</option>
+              <option value="North India">North India</option>
+              <option value="Himalayas & North">Himalayas & North</option>
+              <option value="West India">West India</option>
+              <option value="East & North-East">East & North-East</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Category</label>
+            <select id="new-place-category" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+              <option value="Hills, Tea & Backwaters">Hills & Backwaters</option>
+              <option value="Heritage & Forts">Heritage & Forts</option>
+              <option value="Spiritual & Ancient Heritage">Spiritual & Temples</option>
+              <option value="High-Altitude Mountains">High-Altitude Mountains</option>
+              <option value="Beaches & Coastal Life">Beaches & Coastal Life</option>
+              <option value="Nature & Waterfalls">Nature & Waterfalls</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Entry Fee (₹)</label>
+            <input type="number" id="new-place-fee" value="50" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold" />
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Photo URL</label>
+          <input type="url" id="new-place-image" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold" />
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Short Description</label>
+          <textarea id="new-place-desc" rows="3" placeholder="Describe the scenic beauty, culture, and highlights..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('add-place-modal')" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-bold">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow">
+            Save Place
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: Photo Fullscreen Lightbox -->
+  <!-- ============================================================ -->
+  <div id="photo-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-lg flex items-center justify-center p-3 sm:p-6">
+    <button onclick="closeModal('photo-lightbox')" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white hover:bg-white/40 flex items-center justify-center text-lg z-50">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    
+    <button onclick="prevLightbox()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 text-white hover:bg-white/40 flex items-center justify-center text-lg z-50 transition">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <button onclick="nextLightbox()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 text-white hover:bg-white/40 flex items-center justify-center text-lg z-50 transition">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <div class="max-w-4xl max-h-[85vh] flex flex-col items-center">
+      <img id="lightbox-image" src="" class="max-w-full max-h-[78vh] rounded-2xl object-contain shadow-2xl" />
+      <span id="lightbox-counter" class="text-xs text-white/70 font-bold mt-3 tracking-widest uppercase"></span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Sticky Bottom Navigation Bar for Mobile Phones -->
+  <!-- (Ensures quick reach on small screens!) -->
+  <!-- ============================================================ -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2 flex items-center justify-around shadow-lg">
+    <button onclick="scrollToSection('places-section')" class="flex flex-col items-center text-slate-600 hover:text-orange-600">
+      <i class="fa-solid fa-compass text-base text-orange-500"></i>
+      <span class="text-[10px] font-bold mt-0.5">Places</span>
+    </button>
+    <button onclick="scrollToSection('roadmap-hub-section')" class="flex flex-col items-center text-slate-600 hover:text-orange-600">
+      <i class="fa-solid fa-route text-base text-sky-500"></i>
+      <span class="text-[10px] font-bold mt-0.5">Roadmaps</span>
+    </button>
+    <button onclick="scrollToSection('map-section')" class="flex flex-col items-center text-slate-600 hover:text-orange-600">
+      <i class="fa-solid fa-map text-base text-emerald-500"></i>
+      <span class="text-[10px] font-bold mt-0.5">Map</span>
+    </button>
+    <button onclick="scrollToSection('bookings-section')" class="flex flex-col items-center text-slate-600 hover:text-orange-600">
+      <i class="fa-solid fa-ticket text-base text-rose-500"></i>
+      <span class="text-[10px] font-bold mt-0.5">My Passes</span>
+    </button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Footer -->
+  <!-- ============================================================ -->
+  <footer class="bg-slate-950 text-white pt-12 pb-16 sm:pb-12 border-t border-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-800 text-center md:text-left">
+        <div>
+          <div class="flex items-center justify-center md:justify-start gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white font-bold text-sm">
+              <i class="fa-solid fa-om"></i>
+            </div>
+            <span class="text-xl font-black font-heading tracking-tight">BharatYatra</span>
+          </div>
+          <p class="text-slate-400 text-xs sm:text-sm max-w-md">
+            Simple, attractive, and accessible India tourist place finder. Get instant roadmaps, day-by-day itineraries, and verifiable entry passes on any phone or laptop.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400 font-bold">
+          <button onclick="scrollToSection('places-section')" class="hover:text-orange-400">Places in India</button>
+          <span>•</span>
+          <button onclick="scrollToSection('roadmap-hub-section')" class="hover:text-orange-400">Roadmap Hub</button>
+          <span>•</span>
+          <button onclick="scrollToSection('map-section')" class="hover:text-orange-400">India Map</button>
+          <span>•</span>
+          <button onclick="scrollToSection('bookings-section')" class="hover:text-orange-400">My Passes</button>
+        </div>
+      </div>
+
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3 text-center">
+        <p>&copy; 2026 BharatYatra. Dedicated to Incredible India.</p>
+        <p class="text-[11px] text-slate-600">Optimized for all mobile phones, tablets, and laptops.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- App Script -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
